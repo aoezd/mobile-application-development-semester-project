@@ -1,14 +1,19 @@
 package com.aoezdemir.mobileapplicationdevelopmentsemesterprojekt.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.Date;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Todo {
 
     private Long id;
     private String name;
     private String description;
-    private Date expiry;
+    private Long expiry;
     private Boolean done;
     private Boolean favourite;
     private List<String> contacts;
@@ -17,7 +22,7 @@ public class Todo {
         // Jackson
     }
 
-    public Todo(Long id, String name, String description, Date expiry, Boolean done,
+    public Todo(Long id, String name, String description, Long expiry, Boolean done,
                 Boolean favourite, List<String> contacts) {
         this.id = id;
         this.name = name;
@@ -52,11 +57,11 @@ public class Todo {
         this.description = description;
     }
 
-    public Date getExpiry() {
+    public Long getExpiry() {
         return expiry;
     }
 
-    public void setExpiry(Date expiry) {
+    public void setExpiry(Long expiry) {
         this.expiry = expiry;
     }
 
