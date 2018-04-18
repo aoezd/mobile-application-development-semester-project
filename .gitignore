@@ -41,6 +41,7 @@ captures/
 .idea/libraries
 .idea/caches
 .idea/misc.xml
+.idea/encodings.xml
 
 # Keystore files
 *.jks
