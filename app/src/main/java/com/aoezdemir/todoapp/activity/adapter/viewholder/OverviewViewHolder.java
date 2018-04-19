@@ -1,10 +1,10 @@
-package com.aoezdemir.mobileapplicationdevelopmentsemesterprojekt.activity.adapter.viewholder;
+package com.aoezdemir.todoapp.activity.adapter.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.aoezdemir.mobileapplicationdevelopmentsemesterprojekt.R;
+import com.aoezdemir.todoapp.R;
 
 public class OverviewViewHolder extends RecyclerView.ViewHolder {
 

@@ -1,13 +1,13 @@
-package com.aoezdemir.mobileapplicationdevelopmentsemesterprojekt.activity.adapter;
+package com.aoezdemir.todoapp.activity.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.aoezdemir.mobileapplicationdevelopmentsemesterprojekt.R;
-import com.aoezdemir.mobileapplicationdevelopmentsemesterprojekt.activity.adapter.viewholder.OverviewViewHolder;
-import com.aoezdemir.mobileapplicationdevelopmentsemesterprojekt.model.Todo;
+import com.aoezdemir.todoapp.R;
+import com.aoezdemir.todoapp.activity.adapter.viewholder.OverviewViewHolder;
+import com.aoezdemir.todoapp.model.Todo;
 
 import java.util.List;
 

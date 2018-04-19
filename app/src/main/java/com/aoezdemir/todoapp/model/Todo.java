@@ -1,13 +1,7 @@
-package com.aoezdemir.mobileapplicationdevelopmentsemesterprojekt.model;
+package com.aoezdemir.todoapp.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-
-import java.util.Date;
 import java.util.List;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Todo {
 
     private Long id;
@@ -17,6 +11,7 @@ public class Todo {
     private Boolean done;
     private Boolean favourite;
     private List<String> contacts;
+    private Location location;
 
     public Todo() {
         // Jackson
@@ -87,6 +82,14 @@ public class Todo {
 
     public void setContacts(List<String> contacts) {
         this.contacts = contacts;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     @Override
