@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.aoezdemir.todoapp.R;
 import com.aoezdemir.todoapp.activity.adapter.OverviewAdapter;
@@ -39,13 +40,16 @@ public class OverviewActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Todo>> call, Response<List<Todo>> response) {
                 todos = response.body();
-                ovAdapter = new OverviewAdapter(todos);
-                rvOverview.setAdapter(ovAdapter);
+                if (todos != null) {
+                    ovAdapter = new OverviewAdapter(todos);
+                    rvOverview.setAdapter(ovAdapter);
+                }
             }
 
             @Override
             public void onFailure(Call<List<Todo>> call, Throwable t) {
                 Log.e(TAG, t.getMessage());
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

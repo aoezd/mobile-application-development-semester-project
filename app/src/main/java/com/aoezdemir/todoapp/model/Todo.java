@@ -1,8 +1,14 @@
 package com.aoezdemir.todoapp.model;
 
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-public class Todo {
+public class Todo implements Serializable {
+
+    private final static String DEFAULT_EXPIRY = "--";
 
     private Long id;
     private String name;
@@ -59,6 +65,10 @@ public class Todo {
     public void setExpiry(Long expiry) {
         this.expiry = expiry;
     }
+
+    public boolean isExpired() { return new Date(expiry).before(new Date()); }
+
+    public String formatExpiry() { return expiry != null ? new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.GERMANY).format(new Date(expiry)) : DEFAULT_EXPIRY; }
 
     public Boolean isDone() {
         return done;

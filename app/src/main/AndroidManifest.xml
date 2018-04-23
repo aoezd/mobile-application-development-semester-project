@@ -18,6 +18,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activity.DetailviewActivity"
+            android:parentActivityName=".activity.OverviewActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.OverviewActivity" />
+        </activity>
+        <activity
+            android:name=".activity.EditActivity"
+            android:parentActivityName=".activity.OverviewActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.OverviewActivity" />
+        </activity>
+        <activity
+            android:name=".activity.AddActivity"
+            android:parentActivityName=".activity.OverviewActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.OverviewActivity" />
+        </activity>
     </application>
 
 </manifest>

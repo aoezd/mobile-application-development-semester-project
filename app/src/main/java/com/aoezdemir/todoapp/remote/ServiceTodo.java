@@ -4,6 +4,7 @@ import com.aoezdemir.todoapp.model.Todo;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -21,14 +22,14 @@ public interface ServiceTodo {
     Call<Todo> get(@Path("id") Long id);
 
     @PUT("/api/todos/{id}")
-    void update(@Path("id") Long id, @Body Todo todo);
+    Call<Todo> update(@Path("id") Long id, @Body Todo todo);
 
     @POST("/api/todos/")
-    void create(@Body Todo todo);
+    Call<Todo> create(@Body Todo todo);
 
     @DELETE("/api/todos/")
-    void delete();
+    Call<ResponseBody> delete();
 
     @DELETE("/api/todos/{id}")
-    void delete(@Path("id") Long id);
+    Call<ResponseBody> delete(@Path("id") Long id);
 }
