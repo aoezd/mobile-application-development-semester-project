@@ -1,14 +1,14 @@
-package com.aoezdemir.mobileapplicationdevelopmentsemesterprojekt.model;
+package com.aoezdemir.todoapp.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Todo {
+public class Todo implements Serializable {
+
+    private final static String DEFAULT_EXPIRY = "--";
 
     private Long id;
     private String name;
@@ -17,6 +17,7 @@ public class Todo {
     private Boolean done;
     private Boolean favourite;
     private List<String> contacts;
+    private Location location;
 
     public Todo() {
         // Jackson
@@ -65,6 +66,10 @@ public class Todo {
         this.expiry = expiry;
     }
 
+    public boolean isExpired() { return new Date(expiry).before(new Date()); }
+
+    public String formatExpiry() { return expiry != null ? new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.GERMANY).format(new Date(expiry)) : DEFAULT_EXPIRY; }
+
     public Boolean isDone() {
         return done;
     }
@@ -87,6 +92,14 @@ public class Todo {
 
     public void setContacts(List<String> contacts) {
         this.contacts = contacts;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     @Override
