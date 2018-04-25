@@ -1,5 +1,6 @@
 package com.aoezdemir.todoapp.activity.adapter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -15,12 +16,9 @@ import com.aoezdemir.todoapp.R;
 import com.aoezdemir.todoapp.activity.DetailviewActivity;
 import com.aoezdemir.todoapp.activity.EditActivity;
 import com.aoezdemir.todoapp.model.Todo;
-import com.aoezdemir.todoapp.remote.ServiceFactory;
+import com.aoezdemir.todoapp.crud.ServiceFactory;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -28,6 +26,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.OverviewViewHolder> {
+
+    public final static int CREATE_NEW_TODO = 0;
+    public final static int EDIT_TODO = 1;
 
     private List<Todo> todos;
 
@@ -93,7 +94,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
         private ImageButton ibFavoriteToggle;
         private ImageButton ibDelete;
 
-        public OverviewViewHolder(View v, OverviewAdapter a) {
+        OverviewViewHolder(View v, OverviewAdapter a) {
             super(v);
             view = v;
             adapter = a;
@@ -145,7 +146,6 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
                     @Override
                     public void onResponse(Call<Todo> call, Response<Todo> response) {
                         if (response.isSuccessful()) {
-                            Toast.makeText(view.getContext(), "Todo status changed.", Toast.LENGTH_SHORT).show();
                             adapter.notifyItemChanged(position);
                         } else {
                             Toast.makeText(view.getContext(), "Error: Todo status was not changed.", Toast.LENGTH_SHORT).show();
@@ -179,7 +179,6 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
                     @Override
                     public void onResponse(Call<Todo> call, Response<Todo> response) {
                         if (response.isSuccessful()) {
-                            Toast.makeText(view.getContext(), "Favourite status was changed.", Toast.LENGTH_SHORT).show();
                             adapter.notifyItemChanged(position);
                             ibFavoriteToggle.setVisibility(todo.isDone() ? View.INVISIBLE : View.VISIBLE);
                         } else {
@@ -202,7 +201,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
             ibEdit.setOnClickListener((View v) -> {
                 Intent editIntent = new Intent(view.getContext(), EditActivity.class);
                 editIntent.putExtra(EditActivity.INTENT_KEY_TODO, todo);
-                view.getContext().startActivity(editIntent);
+                ((Activity) view.getContext()).startActivityForResult(editIntent, EDIT_TODO);
             });
         }
 
@@ -221,7 +220,6 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         if (response.isSuccessful()) {
-                            Toast.makeText(view.getContext(), "Todo was deleted.", Toast.LENGTH_SHORT).show();
                             adapter.notifyItemRemoved(position);
                             ibDelete.setVisibility(todo.isDone() ? View.VISIBLE : View.INVISIBLE);
                         } else {
@@ -245,7 +243,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
          * @param todo     Todo to be displayed in the list
          * @param position Index of the todo in the list
          */
-        public void loadTodo(Todo todo, int position) {
+        void loadTodo(Todo todo, int position) {
             initTodoTitle(todo);
             initTodoDate(todo);
             initTodoDoneToggle(todo, position);
