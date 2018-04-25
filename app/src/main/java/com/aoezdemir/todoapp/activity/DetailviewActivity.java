@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.aoezdemir.todoapp.R;
 import com.aoezdemir.todoapp.model.Todo;
-import com.aoezdemir.todoapp.remote.ServiceFactory;
+import com.aoezdemir.todoapp.crud.ServiceFactory;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -97,8 +97,7 @@ public class DetailviewActivity extends AppCompatActivity {
     }
 
     private void loadTodoEdit() {
-        android.support.design.widget.FloatingActionButton fbaEditTodo = findViewById(R.id.fbaEditTodo);
-        fbaEditTodo.setOnClickListener((View v) -> {
+        findViewById(R.id.fbaEditTodo).setOnClickListener((View v) -> {
             Intent editIntent = new Intent(v.getContext(), EditActivity.class);
             editIntent.putExtra(EditActivity.INTENT_KEY_TODO, todo);
             v.getContext().startActivity(editIntent);

@@ -6,8 +6,15 @@
     <string name="default_todo_description">DefaultTodoDescription</string>
     <string name="date_icon_description">Icon for date information.</string>
     <string name="edit_icon_description">Icon for editing the todo.</string>
-    <string name="add_button">Add todo</string>
     <string name="favourite_icon_description">Icon of heart. Describes if todo is a favourite.</string>
     <string name="done_icon_description">Icon of circles. Describes if todo is a done.</string>
     <string name="delete_icon_name">Delete</string>
+
+    // Add / Edit view
+    <string name="add_button">Add todo</string>
+    <string name="save_button">Save changes</string>
+    <string name="title_label">Title</string>
+    <string name="description_label">Description</string>
+    <string name="done_label">Is done?</string>
+    <string name="favourite_label">Is favourite?</string>
 </resources>
