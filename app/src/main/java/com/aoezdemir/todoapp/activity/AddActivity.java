@@ -56,7 +56,7 @@ public class AddActivity extends AppCompatActivity {
                 todo.setName(name);
                 todo.setDescription(((EditText) findViewById(R.id.etEditDescription)).getText().toString());
                 todo.setDone(false);
-                todo.setId(12325233L); // TODOOOOOOO
+                todo.setId(0L);
                 todo.setFavourite(((Switch) findViewById(R.id.sEditFavourite)).isChecked());
                 todo.setExpiry(expiry);
                 ServiceFactory.getServiceTodo().create(todo).enqueue(new Callback<Todo>() {
