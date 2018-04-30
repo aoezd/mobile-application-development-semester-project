@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/iSort"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_sort_white_24dp"
+        android:title="">
+        <menu>
+            <item
+                android:id="@+id/iSortDate"
+                android:title="@string/menu_date"
+                android:icon="@drawable/ic_event_note_dark_gray_24dp"
+                />
+            <item
+                android:id="@+id/iSortFavourite"
+                android:title="@string/menu_favourites"
+                android:icon="@drawable/ic_favorite_red_24dp"
+                />
+        </menu>
+    </item>
+</menu>

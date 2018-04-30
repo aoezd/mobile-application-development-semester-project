@@ -82,6 +82,10 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
         return 0;
     }
 
+    public void setTodos(List<Todo> todos) {
+        this.todos = todos;
+    }
+
     class OverviewViewHolder extends RecyclerView.ViewHolder {
 
         private View view;

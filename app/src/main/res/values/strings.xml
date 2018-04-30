@@ -17,4 +17,8 @@
     <string name="description_label">Description</string>
     <string name="done_label">Is done?</string>
     <string name="favourite_label">Is favourite?</string>
+
+    // Menu
+    <string name="menu_date">Sort by date</string>
+    <string name="menu_favourites">Sort by favourites</string>
 </resources>
