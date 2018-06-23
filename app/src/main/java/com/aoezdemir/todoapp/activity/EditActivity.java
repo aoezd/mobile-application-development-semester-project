@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.aoezdemir.todoapp.R;
 import com.aoezdemir.todoapp.activity.adapter.OverviewAdapter;
-import com.aoezdemir.todoapp.crud.ServiceFactory;
+import com.aoezdemir.todoapp.crud.remote.ServiceFactory;
 import com.aoezdemir.todoapp.model.Todo;
 
 import java.util.Calendar;

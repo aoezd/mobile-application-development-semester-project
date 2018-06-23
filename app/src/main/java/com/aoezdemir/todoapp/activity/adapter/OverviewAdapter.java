@@ -16,7 +16,7 @@ import com.aoezdemir.todoapp.R;
 import com.aoezdemir.todoapp.activity.DetailviewActivity;
 import com.aoezdemir.todoapp.activity.EditActivity;
 import com.aoezdemir.todoapp.model.Todo;
-import com.aoezdemir.todoapp.crud.ServiceFactory;
+import com.aoezdemir.todoapp.crud.remote.ServiceFactory;
 
 import java.util.List;
 

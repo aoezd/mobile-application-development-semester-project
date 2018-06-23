@@ -1,5 +1,10 @@
 package com.aoezdemir.todoapp.model;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+
+import com.aoezdemir.todoapp.crud.local.TodoDBHelper;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,15 +21,15 @@ public class Todo implements Serializable {
     private Long expiry;
     private Boolean done;
     private Boolean favourite;
-    private List<String> contacts;
+    private Contacts contacts;
     private Location location;
 
     public Todo() {
-        // Jackson
+        super();
     }
 
     public Todo(Long id, String name, String description, Long expiry, Boolean done,
-                Boolean favourite, List<String> contacts) {
+                Boolean favourite, Contacts contacts) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -66,9 +71,13 @@ public class Todo implements Serializable {
         this.expiry = expiry;
     }
 
-    public boolean isExpired() { return new Date(expiry).before(new Date()); }
+    public boolean isExpired() {
+        return new Date(expiry).before(new Date());
+    }
 
-    public String formatExpiry() { return expiry != null ? new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.GERMANY).format(new Date(expiry)) : DEFAULT_EXPIRY; }
+    public String formatExpiry() {
+        return expiry != null ? new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.GERMANY).format(new Date(expiry)) : DEFAULT_EXPIRY;
+    }
 
     public Boolean isDone() {
         return done;
@@ -86,11 +95,11 @@ public class Todo implements Serializable {
         this.favourite = favourite;
     }
 
-    public List<String> getContacts() {
+    public Contacts getContacts() {
         return contacts;
     }
 
-    public void setContacts(List<String> contacts) {
+    public void setContacts(Contacts contacts) {
         this.contacts = contacts;
     }
 
@@ -105,6 +114,29 @@ public class Todo implements Serializable {
     @Override
     public boolean equals(Object object) {
         return object instanceof Todo && this.id.equals(((Todo) object).getId());
+    }
+
+    public ContentValues toContentValues() {
+        ContentValues cv = new ContentValues();
+        if (id != null) {
+            cv.put(TodoDBHelper.COL_TODO_ID, id);
+        }
+        cv.put(TodoDBHelper.COL_TODO_NAME, name);
+        cv.put(TodoDBHelper.COL_TODO_DESCRIPTION, description);
+        cv.put(TodoDBHelper.COL_TODO_EXPIRY, expiry);
+        cv.put(TodoDBHelper.COL_TODO_DONE, done ? 1 : 0);
+        cv.put(TodoDBHelper.COL_TODO_FAVOURITE, favourite ? 1 : 0);
+        return cv;
+    }
+
+    public static Todo createFrom(Cursor cursorTodo) {
+        Long id = cursorTodo.getLong(0);
+        String name = cursorTodo.getString(1);
+        String description = cursorTodo.getString(2);
+        Long expiry = cursorTodo.getLong(3);
+        Boolean done = cursorTodo.getInt(4) != 0;
+        Boolean favourite = cursorTodo.getInt(5) != 0;
+        return new Todo(id, name, description, expiry, done, favourite, null);
     }
 
     @Override
