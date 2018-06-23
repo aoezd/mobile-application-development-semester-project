@@ -1,4 +1,4 @@
-package com.aoezdemir.todoapp.crud;
+package com.aoezdemir.todoapp.crud.remote;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

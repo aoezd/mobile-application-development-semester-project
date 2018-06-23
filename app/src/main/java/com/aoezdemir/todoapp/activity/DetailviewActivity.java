@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.aoezdemir.todoapp.R;
 import com.aoezdemir.todoapp.model.Todo;
-import com.aoezdemir.todoapp.crud.ServiceFactory;
+import com.aoezdemir.todoapp.crud.remote.ServiceFactory;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;

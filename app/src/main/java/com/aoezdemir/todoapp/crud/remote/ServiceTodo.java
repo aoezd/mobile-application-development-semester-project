@@ -1,4 +1,4 @@
-package com.aoezdemir.todoapp.crud;
+package com.aoezdemir.todoapp.crud.remote;
 
 import com.aoezdemir.todoapp.model.Todo;
 
