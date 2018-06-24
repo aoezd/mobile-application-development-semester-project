@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.aoezdemir.todoapp.R;
 import com.aoezdemir.todoapp.activity.adapter.OverviewAdapter;
+import com.aoezdemir.todoapp.crud.local.TodoDBHelper;
 import com.aoezdemir.todoapp.crud.remote.ServiceFactory;
 import com.aoezdemir.todoapp.model.Todo;
 
@@ -34,16 +35,19 @@ public class EditActivity extends AppCompatActivity {
     private long expiry;
     private EditText etEditTitle;
     private EditText etEditDescription;
-    private CalendarView cvEditExpiryDate;
     private Switch sEditDone;
     private Switch sEditFavourite;
     private Button bSaveTodo;
+    private boolean isApiAccessable;
+    private TodoDBHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
         todo = (Todo) getIntent().getSerializableExtra(INTENT_KEY_TODO);
+        isApiAccessable = getIntent().getBooleanExtra(OverviewActivity.INTENT_IS_WEB_API_ACCESSIBLE, false);
+        db = new TodoDBHelper(this);
         loadSaveButton();
         loadTodoTitle();
         loadTodoExpiry();
@@ -71,7 +75,7 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void loadTodoExpiry() {
-        cvEditExpiryDate = findViewById(R.id.cvEditExpiryDate);
+        CalendarView cvEditExpiryDate = findViewById(R.id.cvEditExpiryDate);
         expiry = todo.getExpiry();
         cvEditExpiryDate.setDate(expiry);
         cvEditExpiryDate.setOnDateChangeListener((@NonNull CalendarView view, int year, int month, int dayOfMonth) -> {
@@ -128,24 +132,30 @@ public class EditActivity extends AppCompatActivity {
                     }
                 }).show();
             } else {
-                ServiceFactory.getServiceTodo().update(todo.getId(), todo).enqueue(new Callback<Todo>() {
-                    @Override
-                    public void onResponse(Call<Todo> call, Response<Todo> response) {
-                        if (response.isSuccessful()) {
-                            Intent editTodoIntent = new Intent();
-                            editTodoIntent.putExtra(INTENT_KEY_TODO, todo);
-                            setResult(OverviewAdapter.EDIT_TODO, editTodoIntent);
-                            finish();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Failed to update Todo.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                boolean dbUpdateSucceeded = db.updateTodo(todo);
+                if (dbUpdateSucceeded) {
+                    if (isApiAccessable) {
+                        ServiceFactory.getServiceTodo().update(todo.getId(), todo).enqueue(new Callback<Todo>() {
+                            @Override
+                            public void onResponse(Call<Todo> call, Response<Todo> response) {
+                                if (!response.isSuccessful()) {
+                                    Toast.makeText(getApplicationContext(), "Remote error: Failed to update Todo", Toast.LENGTH_SHORT).show();
+                                }
+                            }
 
-                    @Override
-                    public void onFailure(Call<Todo> call, Throwable t) {
-                        Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                            @Override
+                            public void onFailure(Call<Todo> call, Throwable t) {
+                                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
-                });
+                    Intent editTodoIntent = new Intent();
+                    editTodoIntent.putExtra(INTENT_KEY_TODO, todo);
+                    setResult(RESULT_OK, editTodoIntent);
+                    finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Local error: Failed to update Todo", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
