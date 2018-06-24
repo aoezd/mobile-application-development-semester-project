@@ -38,7 +38,6 @@ public class OverviewActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i("OVERVIEWACTIVITY", "------------------------------------ onCreate ------------------------------------");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -54,7 +53,6 @@ public class OverviewActivity extends AppCompatActivity {
 
     @Override
     public void onResume() {
-        Log.i("OVERVIEWACTIVITY", "------------------------------------ onResume ------------------------------------");
         todos = db.getAllTodos();
         updateAdapter();
         super.onResume();
@@ -77,7 +75,6 @@ public class OverviewActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i("OVERVIEWACTIVITY", "------------------------------------ onActivityResult ------------------------------------");
         if (requestCode == OverviewAdapter.CREATE_NEW_TODO && resultCode == RESULT_OK &&
                 data != null && data.hasExtra(AddActivity.INTENT_KEY_TODO)) {
             todos.add((Todo) data.getSerializableExtra(AddActivity.INTENT_KEY_TODO));
