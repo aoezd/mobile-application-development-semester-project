@@ -12,9 +12,6 @@ import java.util.List;
 
 public class TodoDBHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "Todos.db";
-    private static final String TABLE_TODOS_NAME = "TODOS";
-    private static final String TABLE_CONTACTS_NAME = "CONTACTS";
     public static final String COL_TODO_ID = "ID";
     public static final String COL_TODO_NAME = "NAME";
     public static final String COL_TODO_DESCRIPTION = "DESCRIPTION";
@@ -23,6 +20,9 @@ public class TodoDBHelper extends SQLiteOpenHelper {
     public static final String COL_TODO_FAVOURITE = "FAVOURITE";
     public static final String COL_CONTACTS_NAME = "NAME";
     public static final String COL_CONTACTS_TODO_ID = "TODO_ID";
+    private static final String DATABASE_NAME = "Todos.db";
+    private static final String TABLE_TODOS_NAME = "TODOS";
+    private static final String TABLE_CONTACTS_NAME = "CONTACTS";
     private static final String QUERY_CREATE_TODOS = "create table " + TABLE_TODOS_NAME + "(" + COL_TODO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + COL_TODO_NAME + " TEXT NOT NULL, " + COL_TODO_DESCRIPTION + " TEXT, " + COL_TODO_EXPIRY + " INTEGER NOT NULL, " + COL_TODO_DONE + " INTEGER NOT NULL, " + COL_TODO_FAVOURITE + " INTEGER NOT NULL)";
     private static final String QUERY_CREATE_CONTACTS = "create table " + TABLE_CONTACTS_NAME + "(" + COL_CONTACTS_NAME + " TEXT NOT NULL, " + COL_CONTACTS_TODO_ID + " INTEGER NOT NULL, FOREIGN KEY(TODO_ID) REFERENCES " + TABLE_TODOS_NAME + "(" + COL_TODO_ID + "))";
 
@@ -54,14 +54,14 @@ public class TodoDBHelper extends SQLiteOpenHelper {
     public List<Todo> getAllTodos() {
         List<Todo> todos = new ArrayList<>();
         Cursor result = this.getReadableDatabase().rawQuery("SELECT * FROM " + TABLE_TODOS_NAME, null);
-        while(result.moveToNext()) {
+        while (result.moveToNext()) {
             todos.add(Todo.createFrom(result));
         }
         return todos;
     }
 
     public boolean updateTodo(Todo newTodo) {
-        boolean hasTodoUpdateSucceeded = this.getWritableDatabase().update(TABLE_TODOS_NAME, newTodo.toContentValues(), COL_TODO_ID + " = ?", new String[] { newTodo.getId().toString() }) != -1;
+        boolean hasTodoUpdateSucceeded = this.getWritableDatabase().update(TABLE_TODOS_NAME, newTodo.toContentValues(), COL_TODO_ID + " = ?", new String[]{newTodo.getId().toString()}) != -1;
         // boolean hasContactsUpdateSucceeded = TODO FOR CONTACTS;
         return hasTodoUpdateSucceeded;
     }
@@ -72,8 +72,16 @@ public class TodoDBHelper extends SQLiteOpenHelper {
         return hasTodoInsertionSucceeded;
     }
 
+    public boolean insertAllTodos(List<Todo> todos) {
+        boolean result = true;
+        for (int i = 0; i < todos.size() && result; i++) {
+            result = result && insertTodo(todos.get(i));
+        }
+        return result;
+    }
+
     public boolean deleteTodo(Long id) {
-        boolean hasTodoDeletionSucceeded = this.getWritableDatabase().delete(TABLE_TODOS_NAME, COL_TODO_ID + " = ?", new String[] { id.toString() }) == 1;
+        boolean hasTodoDeletionSucceeded = this.getWritableDatabase().delete(TABLE_TODOS_NAME, COL_TODO_ID + " = ?", new String[]{id.toString()}) == 1;
         // boolean hasContactsDeletionSucceeded = TODO FOR CONTACTS;
         return hasTodoDeletionSucceeded;
     }

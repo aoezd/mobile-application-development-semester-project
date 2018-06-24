@@ -1,5 +1,8 @@
 package com.aoezdemir.todoapp.crud.remote;
 
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -13,6 +16,9 @@ public class ServiceFactory {
                 .Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(new OkHttpClient.Builder()
+                        .connectTimeout(1, TimeUnit.SECONDS)
+                        .build())
                 .build()
                 .create(ServiceTodo.class);
     }

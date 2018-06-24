@@ -13,9 +13,9 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.aoezdemir.todoapp.R;
-import com.aoezdemir.todoapp.activity.adapter.OverviewAdapter;
-import com.aoezdemir.todoapp.model.Todo;
+import com.aoezdemir.todoapp.crud.local.TodoDBHelper;
 import com.aoezdemir.todoapp.crud.remote.ServiceFactory;
+import com.aoezdemir.todoapp.model.Todo;
 
 import java.util.Calendar;
 
@@ -56,27 +56,31 @@ public class AddActivity extends AppCompatActivity {
                 todo.setName(name);
                 todo.setDescription(((EditText) findViewById(R.id.etEditDescription)).getText().toString());
                 todo.setDone(false);
-                todo.setId(0L);
                 todo.setFavourite(((Switch) findViewById(R.id.sEditFavourite)).isChecked());
                 todo.setExpiry(expiry);
-                ServiceFactory.getServiceTodo().create(todo).enqueue(new Callback<Todo>() {
-                    @Override
-                    public void onResponse(Call<Todo> call, Response<Todo> response) {
-                        if (response.isSuccessful()) {
-                            Intent addTodoIntent = new Intent();
-                            addTodoIntent.putExtra(INTENT_KEY_TODO, todo);
-                            setResult(OverviewAdapter.CREATE_NEW_TODO, addTodoIntent);
-                            finish();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Failed to create new Todo.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                boolean dbInsertionSucceeded = new TodoDBHelper(this).insertTodo(todo);
+                if (dbInsertionSucceeded) {
+                    boolean isWebApiAccessible = getIntent().getBooleanExtra(OverviewActivity.INTENT_IS_WEB_API_ACCESSIBLE, false);
+                    if (isWebApiAccessible) {
+                        ServiceFactory.getServiceTodo().create(todo).enqueue(new Callback<Todo>() {
+                            @Override
+                            public void onResponse(Call<Todo> call, Response<Todo> response) {
+                                if (!response.isSuccessful()) {
+                                    Toast.makeText(getApplicationContext(), "Failed to create new Todo.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
 
-                    @Override
-                    public void onFailure(Call<Todo> call, Throwable t) {
-                        Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                            @Override
+                            public void onFailure(Call<Todo> call, Throwable t) {
+                                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
-                });
+                    Intent addTodoIntent = new Intent();
+                    addTodoIntent.putExtra(INTENT_KEY_TODO, todo);
+                    setResult(RESULT_OK, addTodoIntent);
+                    finish();
+                }
             }
         });
     }

@@ -1,5 +1,6 @@
 package com.aoezdemir.todoapp.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,8 +12,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aoezdemir.todoapp.R;
-import com.aoezdemir.todoapp.model.Todo;
+import com.aoezdemir.todoapp.activity.adapter.OverviewAdapter;
+import com.aoezdemir.todoapp.crud.local.TodoDBHelper;
 import com.aoezdemir.todoapp.crud.remote.ServiceFactory;
+import com.aoezdemir.todoapp.model.Todo;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -24,18 +27,17 @@ public class DetailviewActivity extends AppCompatActivity {
     public final static String INTENT_KEY_TODO = "DETAIL_KEY_TODO";
 
     private Todo todo;
+    private boolean isApiAccessable;
+    private TodoDBHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         todo = (Todo) getIntent().getSerializableExtra(INTENT_KEY_TODO);
-        loadTodoTitle();
-        loadTodoDescription();
-        loadTodoDate();
-        loadTodoDoneIcon();
-        loadTodoFavouriteIcon();
-        loadTodoEdit();
+        isApiAccessable = getIntent().getBooleanExtra(OverviewActivity.INTENT_IS_WEB_API_ACCESSIBLE, false);
+        db = new TodoDBHelper(this);
+        initializeDetailView();
     }
 
     @Override
@@ -47,23 +49,50 @@ public class DetailviewActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.iDelete) {
-            ServiceFactory.getServiceTodo().delete(todo.getId()).enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.isSuccessful()) {
-                        Toast.makeText(getApplicationContext(), "Todo was deleted.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Error: Failed to delete todo.", Toast.LENGTH_SHORT).show();
-                    }
-                }
+            boolean dbDeletionSucceeded = db.deleteTodo(todo.getId());
+            if (dbDeletionSucceeded) {
+                if (isApiAccessable) {
+                    ServiceFactory.getServiceTodo().delete(todo.getId()).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if (!response.isSuccessful()) {
+                                Toast.makeText(getApplicationContext(), "Remote error: Failed to delete todo.", Toast.LENGTH_SHORT).show();
+                                db.insertTodo(todo);
+                            }
+                        }
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                            db.insertTodo(todo);
+                        }
+                    });
                 }
-            });
+                finish();
+                return true;
+            } else {
+                Toast.makeText(getApplicationContext(), "Local error: Failed to delete todo.", Toast.LENGTH_SHORT).show();
+            }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == OverviewAdapter.EDIT_TODO && resultCode == RESULT_OK &&
+                data != null && data.hasExtra(EditActivity.INTENT_KEY_TODO)) {
+            todo = (Todo) data.getSerializableExtra(EditActivity.INTENT_KEY_TODO);
+            initializeDetailView();
+        }
+    }
+
+    private void initializeDetailView() {
+        loadTodoTitle();
+        loadTodoDescription();
+        loadTodoDate();
+        loadTodoDoneIcon();
+        loadTodoFavouriteIcon();
+        loadTodoEdit();
     }
 
     private void loadTodoTitle() {
@@ -100,7 +129,8 @@ public class DetailviewActivity extends AppCompatActivity {
         findViewById(R.id.fbaEditTodo).setOnClickListener((View v) -> {
             Intent editIntent = new Intent(v.getContext(), EditActivity.class);
             editIntent.putExtra(EditActivity.INTENT_KEY_TODO, todo);
-            v.getContext().startActivity(editIntent);
+            editIntent.putExtra(OverviewActivity.INTENT_IS_WEB_API_ACCESSIBLE, isApiAccessable);
+            ((Activity) v.getContext()).startActivityForResult(editIntent, OverviewAdapter.EDIT_TODO);
         });
     }
 }

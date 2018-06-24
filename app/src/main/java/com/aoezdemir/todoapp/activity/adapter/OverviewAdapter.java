@@ -15,8 +15,10 @@ import android.widget.Toast;
 import com.aoezdemir.todoapp.R;
 import com.aoezdemir.todoapp.activity.DetailviewActivity;
 import com.aoezdemir.todoapp.activity.EditActivity;
-import com.aoezdemir.todoapp.model.Todo;
+import com.aoezdemir.todoapp.activity.OverviewActivity;
+import com.aoezdemir.todoapp.crud.local.TodoDBHelper;
 import com.aoezdemir.todoapp.crud.remote.ServiceFactory;
+import com.aoezdemir.todoapp.model.Todo;
 
 import java.util.List;
 
@@ -31,9 +33,11 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
     public final static int EDIT_TODO = 1;
 
     private List<Todo> todos;
+    private boolean isApiAccessable;
 
-    public OverviewAdapter(List<Todo> todos) {
+    public OverviewAdapter(List<Todo> todos, boolean isApiAccessable) {
         this.todos = todos;
+        this.isApiAccessable = isApiAccessable;
     }
 
     @NonNull
@@ -54,6 +58,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
             holder.view.setOnClickListener((View v) -> {
                 Intent detailIntent = new Intent(v.getContext(), DetailviewActivity.class);
                 detailIntent.putExtra(DetailviewActivity.INTENT_KEY_TODO, todos.get(position));
+                detailIntent.putExtra(OverviewActivity.INTENT_IS_WEB_API_ACCESSIBLE, isApiAccessable);
                 v.getContext().startActivity(detailIntent);
             });
         }
@@ -97,6 +102,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
         private ImageButton ibEdit;
         private ImageButton ibFavoriteToggle;
         private ImageButton ibDelete;
+        private TodoDBHelper db;
 
         OverviewViewHolder(View v, OverviewAdapter a) {
             super(v);
@@ -109,6 +115,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
             ibEdit = view.findViewById(R.id.ibEdit);
             ibFavoriteToggle = view.findViewById(R.id.ibFavouriteToggle);
             ibDelete = view.findViewById(R.id.ibDelete);
+            db = new TodoDBHelper(view.getContext());
         }
 
         /**
@@ -139,30 +146,38 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
          * After a click on the element a request will be sent to the API to change the status of the todo.
          * If something went wrong the changes will be reseted.
          *
-         * @param todo Todo which state was changed
+         * @param todo     Todo which state was changed
          * @param position Position of the element in the RecyclerView for updating the UI
          */
         private void initTodoDoneToggle(Todo todo, int position) {
             ibDone.setImageResource(todo.isDone() ? R.drawable.ic_check_circle_green_24dp : todo.isExpired() ? R.drawable.ic_error_outline_red_24dp : R.drawable.ic_radio_button_not_done_green_24dp);
             ibDone.setOnClickListener((View v) -> {
                 todo.setDone(!todo.isDone());
-                ServiceFactory.getServiceTodo().update(todo.getId(), todo).enqueue(new Callback<Todo>() {
-                    @Override
-                    public void onResponse(Call<Todo> call, Response<Todo> response) {
-                        if (response.isSuccessful()) {
-                            adapter.notifyItemChanged(position);
-                        } else {
-                            Toast.makeText(view.getContext(), "Error: Todo status was not changed.", Toast.LENGTH_SHORT).show();
-                            todo.setDone(!todo.isDone());
-                        }
-                    }
+                boolean dbUpdateSucceeded = db.updateTodo(todo);
+                if (dbUpdateSucceeded) {
+                    if (isApiAccessable) {
+                        ServiceFactory.getServiceTodo().update(todo.getId(), todo).enqueue(new Callback<Todo>() {
+                            @Override
+                            public void onResponse(Call<Todo> call, Response<Todo> response) {
+                                if (!response.isSuccessful()) {
+                                    Toast.makeText(view.getContext(), "Remote error: Todo status was not changed", Toast.LENGTH_SHORT).show();
+                                    todo.setDone(!todo.isDone());
+                                    db.updateTodo(todo);
+                                }
+                            }
 
-                    @Override
-                    public void onFailure(Call<Todo> call, Throwable t) {
-                        Toast.makeText(view.getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-                        todo.setDone(!todo.isDone());
+                            @Override
+                            public void onFailure(Call<Todo> call, Throwable t) {
+                                Toast.makeText(view.getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                                todo.setDone(!todo.isDone());
+                                db.updateTodo(todo);
+                            }
+                        });
                     }
-                });
+                    adapter.notifyItemChanged(position);
+                } else {
+                    Toast.makeText(view.getContext(), "Local error: Todo status could not be changed", Toast.LENGTH_SHORT).show();
+                }
             });
         }
 
@@ -171,7 +186,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
          * The favourite toggle should only be visible if the todo is not done yet.
          * If something went wrong the changes will be reseted.
          *
-         * @param todo Todo which favourite state was changed
+         * @param todo     Todo which favourite state was changed
          * @param position Position of the element in the RecyclerView for updating the UI
          */
         private void initTodoFavouriteToggle(Todo todo, int position) {
@@ -179,24 +194,32 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
             ibFavoriteToggle.setImageResource(todo.isFavourite() ? R.drawable.ic_favorite_red_24dp : R.drawable.ic_favorite_border_dark_gray_24dp);
             ibFavoriteToggle.setOnClickListener((View v) -> {
                 todo.setFavourite(!todo.isFavourite());
-                ServiceFactory.getServiceTodo().update(todo.getId(), todo).enqueue(new Callback<Todo>() {
-                    @Override
-                    public void onResponse(Call<Todo> call, Response<Todo> response) {
-                        if (response.isSuccessful()) {
-                            adapter.notifyItemChanged(position);
-                            ibFavoriteToggle.setVisibility(todo.isDone() ? View.INVISIBLE : View.VISIBLE);
-                        } else {
-                            Toast.makeText(view.getContext(), "Error: Failed to change favourite state.", Toast.LENGTH_SHORT).show();
-                            todo.setFavourite(!todo.isFavourite());
-                        }
-                    }
+                boolean dbUpdateSucceeded = db.updateTodo(todo);
+                if (dbUpdateSucceeded) {
+                    if (isApiAccessable) {
+                        ServiceFactory.getServiceTodo().update(todo.getId(), todo).enqueue(new Callback<Todo>() {
+                            @Override
+                            public void onResponse(Call<Todo> call, Response<Todo> response) {
+                                if (!response.isSuccessful()) {
+                                    Toast.makeText(view.getContext(), "Remote error: Failed to change favourite state", Toast.LENGTH_SHORT).show();
+                                    todo.setFavourite(!todo.isFavourite());
+                                    db.updateTodo(todo);
+                                }
+                            }
 
-                    @Override
-                    public void onFailure(Call<Todo> call, Throwable t) {
-                        Toast.makeText(view.getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-                        todo.setFavourite(!todo.isFavourite());
+                            @Override
+                            public void onFailure(Call<Todo> call, Throwable t) {
+                                Toast.makeText(view.getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                                todo.setFavourite(!todo.isFavourite());
+                                db.updateTodo(todo);
+                            }
+                        });
                     }
-                });
+                    adapter.notifyItemChanged(position);
+                    ibFavoriteToggle.setVisibility(todo.isDone() ? View.INVISIBLE : View.VISIBLE);
+                } else {
+                    Toast.makeText(view.getContext(), "Local error: Failed to change favourite state", Toast.LENGTH_SHORT).show();
+                }
             });
         }
 
@@ -205,6 +228,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
             ibEdit.setOnClickListener((View v) -> {
                 Intent editIntent = new Intent(view.getContext(), EditActivity.class);
                 editIntent.putExtra(EditActivity.INTENT_KEY_TODO, todo);
+                editIntent.putExtra(OverviewActivity.INTENT_IS_WEB_API_ACCESSIBLE, isApiAccessable);
                 ((Activity) view.getContext()).startActivityForResult(editIntent, EDIT_TODO);
             });
         }
@@ -213,31 +237,39 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
          * Initializes the delete button on the overview todo list.
          * Will be shown if todo is done.
          *
-         * @param todo To be deleted
+         * @param todo     To be deleted
          * @param position For updating/notify the adapter
          */
         private void initTodoDelete(Todo todo, int position) {
             ibDelete.setVisibility(todo.isDone() ? View.VISIBLE : View.INVISIBLE);
             ibDelete.setOnClickListener((View v) -> {
                 todos.remove(position);
-                ServiceFactory.getServiceTodo().delete(todo.getId()).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.isSuccessful()) {
-                            adapter.notifyItemRemoved(position);
-                            ibDelete.setVisibility(todo.isDone() ? View.VISIBLE : View.INVISIBLE);
-                        } else {
-                            Toast.makeText(view.getContext(), "Error: Failed to delete todo.", Toast.LENGTH_SHORT).show();
-                            todos.add(position, todo);
-                        }
-                    }
+                boolean dbDeletionSucceeded = db.deleteTodo(todo.getId());
+                if (dbDeletionSucceeded) {
+                    if (isApiAccessable) {
+                        ServiceFactory.getServiceTodo().delete(todo.getId()).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                if (!response.isSuccessful()) {
+                                    Toast.makeText(view.getContext(), "Remote error: Failed to delete todo", Toast.LENGTH_SHORT).show();
+                                    todos.add(position, todo);
+                                    db.insertTodo(todo);
+                                }
+                            }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Toast.makeText(view.getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-                        todos.add(position, todo);
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                Toast.makeText(view.getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                                todos.add(position, todo);
+                                db.insertTodo(todo);
+                            }
+                        });
                     }
-                });
+                    adapter.notifyItemRemoved(position);
+                    ibDelete.setVisibility(todo.isDone() ? View.VISIBLE : View.INVISIBLE);
+                } else {
+                    Toast.makeText(view.getContext(), "Local error: Failed to delete todo", Toast.LENGTH_SHORT).show();
+                }
             });
         }
 
