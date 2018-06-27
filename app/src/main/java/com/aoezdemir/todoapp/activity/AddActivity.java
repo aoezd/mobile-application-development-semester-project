@@ -1,10 +1,8 @@
 package com.aoezdemir.todoapp.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CalendarView;
@@ -16,6 +14,7 @@ import com.aoezdemir.todoapp.R;
 import com.aoezdemir.todoapp.crud.local.TodoDBHelper;
 import com.aoezdemir.todoapp.crud.remote.ServiceFactory;
 import com.aoezdemir.todoapp.model.Todo;
+import com.aoezdemir.todoapp.utils.AlertDialogMaker;
 
 import java.util.Calendar;
 
@@ -45,12 +44,7 @@ public class AddActivity extends AppCompatActivity {
             // If no title was set -> show alert dialog
             String name = ((EditText) findViewById(R.id.etEditTitle)).getText().toString();
             if (name.isEmpty()) {
-                new AlertDialog.Builder(this).setTitle("No title set").setMessage("Please provide at least a title for the new todo.").setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).show();
+                AlertDialogMaker.makeNeutralOkAlertDialog(this, "No title set", "Please provide at least a title for the new todo.");
             } else {
                 Todo todo = new Todo();
                 todo.setName(name);
@@ -60,18 +54,18 @@ public class AddActivity extends AppCompatActivity {
                 todo.setExpiry(expiry);
                 boolean dbInsertionSucceeded = new TodoDBHelper(this).insertTodo(todo);
                 if (dbInsertionSucceeded) {
-                    boolean isWebApiAccessible = getIntent().getBooleanExtra(OverviewActivity.INTENT_IS_WEB_API_ACCESSIBLE, false);
+                    boolean isWebApiAccessible = getIntent().getBooleanExtra(RouterEmptyActivity.INTENT_IS_WEB_API_ACCESSIBLE, false);
                     if (isWebApiAccessible) {
-                        ServiceFactory.getServiceTodo().create(todo).enqueue(new Callback<Todo>() {
+                        ServiceFactory.getServiceTodo().createTodo(todo).enqueue(new Callback<Todo>() {
                             @Override
-                            public void onResponse(Call<Todo> call, Response<Todo> response) {
+                            public void onResponse(@NonNull Call<Todo> call, @NonNull Response<Todo> response) {
                                 if (!response.isSuccessful()) {
-                                    Toast.makeText(getApplicationContext(), "Failed to create new Todo.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "Failed to createTodo new Todo.", Toast.LENGTH_SHORT).show();
                                 }
                             }
 
                             @Override
-                            public void onFailure(Call<Todo> call, Throwable t) {
+                            public void onFailure(@NonNull Call<Todo> call, @NonNull Throwable t) {
                                 Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });

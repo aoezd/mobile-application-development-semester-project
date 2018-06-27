@@ -1,6 +1,7 @@
 package com.aoezdemir.todoapp.crud.remote;
 
 import com.aoezdemir.todoapp.model.Todo;
+import com.aoezdemir.todoapp.model.User;
 
 import java.util.List;
 
@@ -16,20 +17,23 @@ import retrofit2.http.Path;
 public interface ServiceTodo {
 
     @GET("/api/todos/")
-    Call<List<Todo>> get();
+    Call<List<Todo>> readAllTodos();
 
     @GET("/api/todos/{id}")
-    Call<Todo> get(@Path("id") Long id);
+    Call<Todo> readTodo(@Path("id") Long id);
 
     @PUT("/api/todos/{id}")
-    Call<Todo> update(@Path("id") Long id, @Body Todo todo);
+    Call<Todo> updateTodo(@Path("id") Long id, @Body Todo todo);
 
     @POST("/api/todos/")
-    Call<Todo> create(@Body Todo todo);
+    Call<Todo> createTodo(@Body Todo todo);
 
     @DELETE("/api/todos/")
-    Call<ResponseBody> delete();
+    Call<ResponseBody> deleteAllTodos();
 
     @DELETE("/api/todos/{id}")
-    Call<ResponseBody> delete(@Path("id") Long id);
+    Call<ResponseBody> deleteTodo(@Path("id") Long id);
+
+    @PUT("/api/users/auth")
+    Call<Boolean> authenticateUser(@Body User user);
 }

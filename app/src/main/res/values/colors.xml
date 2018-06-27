@@ -10,4 +10,8 @@
     <color name="colorTodoDescriptionDefault">#000</color>
     <color name="colorTodoDateDefault">#AAA</color>
     <color name="colorTodoDateExpired">#AA0000</color>
+
+    // Login
+    <color name="colorTextDefault">#000</color>
+    <color name="colorTextError">#AA0000</color>
 </resources>

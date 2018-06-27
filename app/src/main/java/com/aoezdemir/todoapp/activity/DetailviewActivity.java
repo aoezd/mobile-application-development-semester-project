@@ -3,6 +3,7 @@ package com.aoezdemir.todoapp.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,7 +36,7 @@ public class DetailviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         todo = (Todo) getIntent().getSerializableExtra(INTENT_KEY_TODO);
-        isApiAccessable = getIntent().getBooleanExtra(OverviewActivity.INTENT_IS_WEB_API_ACCESSIBLE, false);
+        isApiAccessable = getIntent().getBooleanExtra(RouterEmptyActivity.INTENT_IS_WEB_API_ACCESSIBLE, false);
         db = new TodoDBHelper(this);
         initializeDetailView();
     }
@@ -52,17 +53,17 @@ public class DetailviewActivity extends AppCompatActivity {
             boolean dbDeletionSucceeded = db.deleteTodo(todo.getId());
             if (dbDeletionSucceeded) {
                 if (isApiAccessable) {
-                    ServiceFactory.getServiceTodo().delete(todo.getId()).enqueue(new Callback<ResponseBody>() {
+                    ServiceFactory.getServiceTodo().deleteTodo(todo.getId()).enqueue(new Callback<ResponseBody>() {
                         @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                             if (!response.isSuccessful()) {
-                                Toast.makeText(getApplicationContext(), "Remote error: Failed to delete todo.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Remote error: Failed to deleteAllTodos todo.", Toast.LENGTH_SHORT).show();
                                 db.insertTodo(todo);
                             }
                         }
 
                         @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                             Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                             db.insertTodo(todo);
                         }
@@ -71,7 +72,7 @@ public class DetailviewActivity extends AppCompatActivity {
                 finish();
                 return true;
             } else {
-                Toast.makeText(getApplicationContext(), "Local error: Failed to delete todo.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Local error: Failed to deleteAllTodos todo.", Toast.LENGTH_SHORT).show();
             }
         }
         return super.onOptionsItemSelected(item);
@@ -129,7 +130,7 @@ public class DetailviewActivity extends AppCompatActivity {
         findViewById(R.id.fbaEditTodo).setOnClickListener((View v) -> {
             Intent editIntent = new Intent(v.getContext(), EditActivity.class);
             editIntent.putExtra(EditActivity.INTENT_KEY_TODO, todo);
-            editIntent.putExtra(OverviewActivity.INTENT_IS_WEB_API_ACCESSIBLE, isApiAccessable);
+            editIntent.putExtra(RouterEmptyActivity.INTENT_IS_WEB_API_ACCESSIBLE, isApiAccessable);
             ((Activity) v.getContext()).startActivityForResult(editIntent, OverviewAdapter.EDIT_TODO);
         });
     }

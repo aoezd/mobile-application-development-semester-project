@@ -29,4 +29,5 @@
     <string name="login_email">Email</string>
     <string name="login_password">Password</string>
     <string name="button_sign_in">Sign in</string>
+    <string name="error_info">Wrong username or password!</string>
 </resources>

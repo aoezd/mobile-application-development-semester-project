@@ -1,10 +1,8 @@
 package com.aoezdemir.todoapp.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -15,10 +13,10 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.aoezdemir.todoapp.R;
-import com.aoezdemir.todoapp.activity.adapter.OverviewAdapter;
 import com.aoezdemir.todoapp.crud.local.TodoDBHelper;
 import com.aoezdemir.todoapp.crud.remote.ServiceFactory;
 import com.aoezdemir.todoapp.model.Todo;
+import com.aoezdemir.todoapp.utils.AlertDialogMaker;
 
 import java.util.Calendar;
 
@@ -38,7 +36,7 @@ public class EditActivity extends AppCompatActivity {
     private Switch sEditDone;
     private Switch sEditFavourite;
     private Button bSaveTodo;
-    private boolean isApiAccessable;
+    private boolean isApiAccessible;
     private TodoDBHelper db;
 
     @Override
@@ -46,7 +44,7 @@ public class EditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
         todo = (Todo) getIntent().getSerializableExtra(INTENT_KEY_TODO);
-        isApiAccessable = getIntent().getBooleanExtra(OverviewActivity.INTENT_IS_WEB_API_ACCESSIBLE, false);
+        isApiAccessible = getIntent().getBooleanExtra(RouterEmptyActivity.INTENT_IS_WEB_API_ACCESSIBLE, false);
         db = new TodoDBHelper(this);
         loadSaveButton();
         loadTodoTitle();
@@ -101,17 +99,13 @@ public class EditActivity extends AppCompatActivity {
     private void loadTodoDone() {
         sEditDone = findViewById(R.id.sEditDone);
         sEditDone.setChecked(todo.isDone());
-        sEditDone.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            enableSaveButton();
-        });
+        sEditDone.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> enableSaveButton());
     }
 
     private void loadTodoFavourite() {
         sEditFavourite = findViewById(R.id.sEditFavourite);
         sEditFavourite.setChecked(todo.isFavourite());
-        sEditFavourite.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            enableSaveButton();
-        });
+        sEditFavourite.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> enableSaveButton());
     }
 
     private void enableSaveButton() {
@@ -125,26 +119,21 @@ public class EditActivity extends AppCompatActivity {
         bSaveTodo.setOnClickListener((View v) -> {
             updateTodoWithUIData();
             if (todo.getName().isEmpty()) {
-                new AlertDialog.Builder(this).setTitle("No title set").setMessage("Please provide at least a title for the todo.").setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).show();
+                AlertDialogMaker.makeNeutralOkAlertDialog(this, "No title set", "Please provide at least a title for the todo.");
             } else {
                 boolean dbUpdateSucceeded = db.updateTodo(todo);
                 if (dbUpdateSucceeded) {
-                    if (isApiAccessable) {
-                        ServiceFactory.getServiceTodo().update(todo.getId(), todo).enqueue(new Callback<Todo>() {
+                    if (isApiAccessible) {
+                        ServiceFactory.getServiceTodo().updateTodo(todo.getId(), todo).enqueue(new Callback<Todo>() {
                             @Override
-                            public void onResponse(Call<Todo> call, Response<Todo> response) {
+                            public void onResponse(@NonNull Call<Todo> call, @NonNull Response<Todo> response) {
                                 if (!response.isSuccessful()) {
-                                    Toast.makeText(getApplicationContext(), "Remote error: Failed to update Todo", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "Remote error: Failed to updateTodo Todo", Toast.LENGTH_SHORT).show();
                                 }
                             }
 
                             @Override
-                            public void onFailure(Call<Todo> call, Throwable t) {
+                            public void onFailure(@NonNull Call<Todo> call, @NonNull Throwable t) {
                                 Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -154,7 +143,7 @@ public class EditActivity extends AppCompatActivity {
                     setResult(RESULT_OK, editTodoIntent);
                     finish();
                 } else {
-                    Toast.makeText(getApplicationContext(), "Local error: Failed to update Todo", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Local error: Failed to updateTodo Todo", Toast.LENGTH_SHORT).show();
                 }
             }
         });
