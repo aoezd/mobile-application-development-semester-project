@@ -2,6 +2,7 @@ package com.aoezdemir.todoapp.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,7 +10,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.aoezdemir.todoapp.R;
 import com.aoezdemir.todoapp.activity.adapter.OverviewAdapter;
@@ -27,14 +27,13 @@ import retrofit2.Response;
 
 public class OverviewActivity extends AppCompatActivity {
 
-    public static final String INTENT_IS_WEB_API_ACCESSIBLE = "IS_WEB_API_ACCESSIBLE";
     private static final String TAG = OverviewActivity.class.getSimpleName();
     private RecyclerView rvOverview;
     private OverviewAdapter ovAdapter;
     private List<Todo> todos;
     private TodoDBHelper db;
     private boolean sortDateBased = true;
-    private boolean isApiAccessable = true;
+    private boolean isApiAccessable = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +45,35 @@ public class OverviewActivity extends AppCompatActivity {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rvOverview.setLayoutManager(linearLayoutManager);
 
+        if (getIntent().hasExtra(RouterEmptyActivity.INTENT_IS_WEB_API_ACCESSIBLE)) {
+            isApiAccessable = getIntent().getBooleanExtra(RouterEmptyActivity.INTENT_IS_WEB_API_ACCESSIBLE, false);
+        }
         db = new TodoDBHelper(this);
         todos = db.getAllTodos();
-        isWebApiAccessible(todos != null && !todos.isEmpty());
+        if (isApiAccessable) {
+            ServiceFactory.getServiceTodo().readAllTodos().enqueue(new Callback<List<Todo>>() {
+                @Override
+                public void onResponse(@NonNull Call<List<Todo>> call, @NonNull Response<List<Todo>> response) {
+                    if (todos != null && !todos.isEmpty()) {
+                        deleteAllApiTodos();
+                        createAllApiTodosFromLocal();
+                    } else {
+                        todos = response.body();
+                        db.deleteAllTodos();
+                        db.insertAllTodos(todos);
+                    }
+                    initializeUIElements();
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<List<Todo>> call, @NonNull Throwable t) {
+                    isApiAccessable = false;
+                    initializeUIElements();
+                }
+            });
+        } else {
+            initializeUIElements();
+        }
     }
 
     @Override
@@ -96,64 +121,33 @@ public class OverviewActivity extends AppCompatActivity {
     }
 
     private void deleteAllApiTodos() {
-        ServiceFactory.getServiceTodo().delete().enqueue(new Callback<ResponseBody>() {
+        ServiceFactory.getServiceTodo().deleteAllTodos().enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 Log.i(TAG, "All todos deleted on web API.");
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e(TAG, "Could not delete all todos on web API." + t.getMessage());
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.e(TAG, "Could not deleteAllTodos all todos on web API." + t.getMessage());
             }
         });
     }
 
     private void createAllApiTodosFromLocal() {
         for (Todo todo : todos) {
-            ServiceFactory.getServiceTodo().create(todo).enqueue(new Callback<Todo>() {
+            ServiceFactory.getServiceTodo().createTodo(todo).enqueue(new Callback<Todo>() {
                 @Override
-                public void onResponse(Call<Todo> call, Response<Todo> response) {
+                public void onResponse(@NonNull Call<Todo> call, @NonNull Response<Todo> response) {
                     Log.i(TAG, "Todo with id '" + todo.getId() + "' was created on web API.");
                 }
 
                 @Override
-                public void onFailure(Call<Todo> call, Throwable t) {
-                    Log.e(TAG, "Could not delete all todos on web API." + t.getMessage());
+                public void onFailure(@NonNull Call<Todo> call, @NonNull Throwable t) {
+                    Log.e(TAG, "Could not deleteAllTodos all todos on web API." + t.getMessage());
                 }
             });
         }
-    }
-
-    /**
-     * Checks if the web API is accessible and synchronizes the local database with the web API.
-     * After synchronization the todo list will be initialized.
-     *
-     * @param localTodosExists
-     */
-    private void isWebApiAccessible(boolean localTodosExists) {
-        ServiceFactory.getServiceTodo().get().enqueue(new Callback<List<Todo>>() {
-            @Override
-            public void onResponse(Call<List<Todo>> call, Response<List<Todo>> response) {
-                if (localTodosExists) {
-                    deleteAllApiTodos();
-                    createAllApiTodosFromLocal();
-                } else {
-                    todos = response.body();
-                    db.deleteAllTodos();
-                    db.insertAllTodos(todos);
-                }
-                initializeUIElements();
-            }
-
-            @Override
-            public void onFailure(Call<List<Todo>> call, Throwable t) {
-                Log.e(TAG, "Could NOT access the web API. " + t.getMessage());
-                isApiAccessable = false;
-                Toast.makeText(getApplicationContext(), "Could NOT access the web API", Toast.LENGTH_LONG).show();
-                initializeUIElements();
-            }
-        });
     }
 
     private void initializeUIElements() {
@@ -164,7 +158,7 @@ public class OverviewActivity extends AppCompatActivity {
         }
         findViewById(R.id.fabAddTodo).setOnClickListener((View v) -> {
             Intent intent = new Intent(this, AddActivity.class);
-            intent.putExtra(INTENT_IS_WEB_API_ACCESSIBLE, isApiAccessable);
+            intent.putExtra(RouterEmptyActivity.INTENT_IS_WEB_API_ACCESSIBLE, isApiAccessable);
             startActivityForResult(intent, OverviewAdapter.CREATE_NEW_TODO);
         });
     }

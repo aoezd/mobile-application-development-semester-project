@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.aoezdemir.todoapp.R;
 import com.aoezdemir.todoapp.activity.DetailviewActivity;
 import com.aoezdemir.todoapp.activity.EditActivity;
-import com.aoezdemir.todoapp.activity.OverviewActivity;
+import com.aoezdemir.todoapp.activity.RouterEmptyActivity;
 import com.aoezdemir.todoapp.crud.local.TodoDBHelper;
 import com.aoezdemir.todoapp.crud.remote.ServiceFactory;
 import com.aoezdemir.todoapp.model.Todo;
@@ -33,11 +33,11 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
     public final static int EDIT_TODO = 1;
 
     private List<Todo> todos;
-    private boolean isApiAccessable;
+    private boolean isApiAccessible;
 
     public OverviewAdapter(List<Todo> todos, boolean isApiAccessable) {
         this.todos = todos;
-        this.isApiAccessable = isApiAccessable;
+        this.isApiAccessible = isApiAccessable;
     }
 
     @NonNull
@@ -58,7 +58,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
             holder.view.setOnClickListener((View v) -> {
                 Intent detailIntent = new Intent(v.getContext(), DetailviewActivity.class);
                 detailIntent.putExtra(DetailviewActivity.INTENT_KEY_TODO, todos.get(position));
-                detailIntent.putExtra(OverviewActivity.INTENT_IS_WEB_API_ACCESSIBLE, isApiAccessable);
+                detailIntent.putExtra(RouterEmptyActivity.INTENT_IS_WEB_API_ACCESSIBLE, isApiAccessible);
                 v.getContext().startActivity(detailIntent);
             });
         }
@@ -155,10 +155,10 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
                 todo.setDone(!todo.isDone());
                 boolean dbUpdateSucceeded = db.updateTodo(todo);
                 if (dbUpdateSucceeded) {
-                    if (isApiAccessable) {
-                        ServiceFactory.getServiceTodo().update(todo.getId(), todo).enqueue(new Callback<Todo>() {
+                    if (isApiAccessible) {
+                        ServiceFactory.getServiceTodo().updateTodo(todo.getId(), todo).enqueue(new Callback<Todo>() {
                             @Override
-                            public void onResponse(Call<Todo> call, Response<Todo> response) {
+                            public void onResponse(@NonNull Call<Todo> call, @NonNull Response<Todo> response) {
                                 if (!response.isSuccessful()) {
                                     Toast.makeText(view.getContext(), "Remote error: Todo status was not changed", Toast.LENGTH_SHORT).show();
                                     todo.setDone(!todo.isDone());
@@ -167,7 +167,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
                             }
 
                             @Override
-                            public void onFailure(Call<Todo> call, Throwable t) {
+                            public void onFailure(@NonNull Call<Todo> call, @NonNull Throwable t) {
                                 Toast.makeText(view.getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                                 todo.setDone(!todo.isDone());
                                 db.updateTodo(todo);
@@ -196,10 +196,10 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
                 todo.setFavourite(!todo.isFavourite());
                 boolean dbUpdateSucceeded = db.updateTodo(todo);
                 if (dbUpdateSucceeded) {
-                    if (isApiAccessable) {
-                        ServiceFactory.getServiceTodo().update(todo.getId(), todo).enqueue(new Callback<Todo>() {
+                    if (isApiAccessible) {
+                        ServiceFactory.getServiceTodo().updateTodo(todo.getId(), todo).enqueue(new Callback<Todo>() {
                             @Override
-                            public void onResponse(Call<Todo> call, Response<Todo> response) {
+                            public void onResponse(@NonNull Call<Todo> call, @NonNull Response<Todo> response) {
                                 if (!response.isSuccessful()) {
                                     Toast.makeText(view.getContext(), "Remote error: Failed to change favourite state", Toast.LENGTH_SHORT).show();
                                     todo.setFavourite(!todo.isFavourite());
@@ -208,7 +208,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
                             }
 
                             @Override
-                            public void onFailure(Call<Todo> call, Throwable t) {
+                            public void onFailure(@NonNull Call<Todo> call, @NonNull Throwable t) {
                                 Toast.makeText(view.getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                                 todo.setFavourite(!todo.isFavourite());
                                 db.updateTodo(todo);
@@ -228,13 +228,13 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
             ibEdit.setOnClickListener((View v) -> {
                 Intent editIntent = new Intent(view.getContext(), EditActivity.class);
                 editIntent.putExtra(EditActivity.INTENT_KEY_TODO, todo);
-                editIntent.putExtra(OverviewActivity.INTENT_IS_WEB_API_ACCESSIBLE, isApiAccessable);
+                editIntent.putExtra(RouterEmptyActivity.INTENT_IS_WEB_API_ACCESSIBLE, isApiAccessible);
                 ((Activity) view.getContext()).startActivityForResult(editIntent, EDIT_TODO);
             });
         }
 
         /**
-         * Initializes the delete button on the overview todo list.
+         * Initializes the deleteAllTodos button on the overview todo list.
          * Will be shown if todo is done.
          *
          * @param todo     To be deleted
@@ -246,19 +246,19 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
                 todos.remove(position);
                 boolean dbDeletionSucceeded = db.deleteTodo(todo.getId());
                 if (dbDeletionSucceeded) {
-                    if (isApiAccessable) {
-                        ServiceFactory.getServiceTodo().delete(todo.getId()).enqueue(new Callback<ResponseBody>() {
+                    if (isApiAccessible) {
+                        ServiceFactory.getServiceTodo().deleteTodo(todo.getId()).enqueue(new Callback<ResponseBody>() {
                             @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                                 if (!response.isSuccessful()) {
-                                    Toast.makeText(view.getContext(), "Remote error: Failed to delete todo", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(view.getContext(), "Remote error: Failed to deleteAllTodos todo", Toast.LENGTH_SHORT).show();
                                     todos.add(position, todo);
                                     db.insertTodo(todo);
                                 }
                             }
 
                             @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                                 Toast.makeText(view.getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                                 todos.add(position, todo);
                                 db.insertTodo(todo);
@@ -268,7 +268,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
                     adapter.notifyItemRemoved(position);
                     ibDelete.setVisibility(todo.isDone() ? View.VISIBLE : View.INVISIBLE);
                 } else {
-                    Toast.makeText(view.getContext(), "Local error: Failed to delete todo", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(view.getContext(), "Local error: Failed to deleteAllTodos todo", Toast.LENGTH_SHORT).show();
                 }
             });
         }

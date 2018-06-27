@@ -8,7 +8,6 @@ import com.aoezdemir.todoapp.crud.local.TodoDBHelper;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class Todo implements Serializable {
@@ -37,6 +36,16 @@ public class Todo implements Serializable {
         this.done = done;
         this.favourite = favourite;
         this.contacts = contacts;
+    }
+
+    public static Todo createFrom(Cursor cursorTodo) {
+        Long id = cursorTodo.getLong(0);
+        String name = cursorTodo.getString(1);
+        String description = cursorTodo.getString(2);
+        Long expiry = cursorTodo.getLong(3);
+        Boolean done = cursorTodo.getInt(4) != 0;
+        Boolean favourite = cursorTodo.getInt(5) != 0;
+        return new Todo(id, name, description, expiry, done, favourite, null);
     }
 
     public Long getId() {
@@ -127,16 +136,6 @@ public class Todo implements Serializable {
         cv.put(TodoDBHelper.COL_TODO_DONE, done ? 1 : 0);
         cv.put(TodoDBHelper.COL_TODO_FAVOURITE, favourite ? 1 : 0);
         return cv;
-    }
-
-    public static Todo createFrom(Cursor cursorTodo) {
-        Long id = cursorTodo.getLong(0);
-        String name = cursorTodo.getString(1);
-        String description = cursorTodo.getString(2);
-        Long expiry = cursorTodo.getLong(3);
-        Boolean done = cursorTodo.getInt(4) != 0;
-        Boolean favourite = cursorTodo.getInt(5) != 0;
-        return new Todo(id, name, description, expiry, done, favourite, null);
     }
 
     @Override
