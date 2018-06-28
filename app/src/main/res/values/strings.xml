@@ -17,7 +17,14 @@
     <string name="description_label">Description</string>
     <string name="done_label">Is done?</string>
     <string name="favourite_label">Is favourite?</string>
-    <string name="text_no_todos">No todos found :(</string>
+    <string name="default_contact_name">DefaultContactName</string>
+    <string name="default_contact_telephone">DefaultContactTelephone</string>
+    <string name="default_contact_email">DefaultContactEmail</string>
+    <string name="delete_contact_icon_description">Delete</string>
+    <string name="share_contact_icon_description">Icon of an arrow. Shares todo with contact.</string>
+    <string name="phone_contact_icon_description">Icon of phone</string>
+    <string name="email_contact_icon_description">Icon of email</string>
+    <string name="picture_description">Profile picture of user.</string>
 
     // Menu
     <string name="menu_date">Sort by date</string>
