@@ -7,7 +7,10 @@ import com.aoezdemir.todoapp.crud.local.TodoDBHelper;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class Todo implements Serializable {
@@ -20,15 +23,16 @@ public class Todo implements Serializable {
     private Long expiry;
     private Boolean done;
     private Boolean favourite;
-    private Contacts contacts;
+    private List<String> contacts;
     private Location location;
 
     public Todo() {
         super();
+        contacts = new ArrayList<>();
     }
 
     public Todo(Long id, String name, String description, Long expiry, Boolean done,
-                Boolean favourite, Contacts contacts) {
+                Boolean favourite, List<String> contacts) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -45,7 +49,8 @@ public class Todo implements Serializable {
         Long expiry = cursorTodo.getLong(3);
         Boolean done = cursorTodo.getInt(4) != 0;
         Boolean favourite = cursorTodo.getInt(5) != 0;
-        return new Todo(id, name, description, expiry, done, favourite, null);
+        String contacts = cursorTodo.getString(6);
+        return new Todo(id, name, description, expiry, done, favourite, new ArrayList<>(Arrays.asList(contacts.split(","))));
     }
 
     public Long getId() {
@@ -104,12 +109,28 @@ public class Todo implements Serializable {
         this.favourite = favourite;
     }
 
-    public Contacts getContacts() {
+    public List<String> getContacts() {
         return contacts;
     }
 
-    public void setContacts(Contacts contacts) {
+    public void setContacts(List<String> contacts) {
         this.contacts = contacts;
+    }
+
+    public void addContact(String contact) {
+        if (contacts == null) {
+            contacts = new ArrayList<>();
+        }
+        if (!contacts.contains(contact)) {
+            contacts.add(contact);
+        }
+    }
+
+    public void addAllContacts(List<String> contacts) {
+        if (this.contacts == null) {
+            this.contacts = new ArrayList<>();
+        }
+        this.contacts.addAll(contacts);
     }
 
     public Location getLocation() {
@@ -135,6 +156,7 @@ public class Todo implements Serializable {
         cv.put(TodoDBHelper.COL_TODO_EXPIRY, expiry);
         cv.put(TodoDBHelper.COL_TODO_DONE, done ? 1 : 0);
         cv.put(TodoDBHelper.COL_TODO_FAVOURITE, favourite ? 1 : 0);
+        cv.put(TodoDBHelper.COL_TODO_CONTACTS, android.text.TextUtils.join(",", contacts));
         return cv;
     }
 
@@ -142,6 +164,6 @@ public class Todo implements Serializable {
     public String toString() {
         return "Todo {id = " + id + ", name = " + name + ", description = " + description +
                 ", expiry = " + expiry + ", done = " + done + ", favourite = " + favourite +
-                ", contacts = " + contacts + "}";
+                ", contacts = " + android.text.TextUtils.join(",", contacts) + "}";
     }
 }

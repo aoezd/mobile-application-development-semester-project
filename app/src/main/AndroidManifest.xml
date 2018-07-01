@@ -3,6 +3,7 @@
     package="com.aoezdemir.todoapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:allowBackup="true"
@@ -11,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppDefaultTheme">
-        <activity android:name=".activity.RouterEmptyActivity"
+        <activity
+            android:name=".activity.RouterEmptyActivity"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,8 +23,7 @@
         <activity
             android:name=".activity.LoginActivity"
             android:theme="@style/AppLoginTheme" />
-        <activity android:name=".activity.OverviewActivity">
-        </activity>
+        <activity android:name=".activity.OverviewActivity" />
         <activity
             android:name=".activity.DetailviewActivity"
             android:parentActivityName=".activity.OverviewActivity">

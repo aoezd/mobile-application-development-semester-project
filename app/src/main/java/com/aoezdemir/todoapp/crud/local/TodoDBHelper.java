@@ -18,13 +18,15 @@ public class TodoDBHelper extends SQLiteOpenHelper {
     public static final String COL_TODO_EXPIRY = "EXPIRY";
     public static final String COL_TODO_DONE = "DONE";
     public static final String COL_TODO_FAVOURITE = "FAVOURITE";
+    public static final String COL_TODO_CONTACTS = "CONTACTS";
+
+
     public static final String COL_CONTACTS_NAME = "NAME";
     public static final String COL_CONTACTS_TODO_ID = "TODO_ID";
     private static final String DATABASE_NAME = "Todos.db";
     private static final String TABLE_TODOS_NAME = "TODOS";
     private static final String TABLE_CONTACTS_NAME = "CONTACTS";
-    private static final String QUERY_CREATE_TODOS = "create table " + TABLE_TODOS_NAME + "(" + COL_TODO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + COL_TODO_NAME + " TEXT NOT NULL, " + COL_TODO_DESCRIPTION + " TEXT, " + COL_TODO_EXPIRY + " INTEGER NOT NULL, " + COL_TODO_DONE + " INTEGER NOT NULL, " + COL_TODO_FAVOURITE + " INTEGER NOT NULL)";
-    private static final String QUERY_CREATE_CONTACTS = "create table " + TABLE_CONTACTS_NAME + "(" + COL_CONTACTS_NAME + " TEXT NOT NULL, " + COL_CONTACTS_TODO_ID + " INTEGER NOT NULL, FOREIGN KEY(TODO_ID) REFERENCES " + TABLE_TODOS_NAME + "(" + COL_TODO_ID + "))";
+    private static final String QUERY_CREATE_TODOS = "create table " + TABLE_TODOS_NAME + "(" + COL_TODO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + COL_TODO_NAME + " TEXT NOT NULL, " + COL_TODO_DESCRIPTION + " TEXT, " + COL_TODO_EXPIRY + " INTEGER NOT NULL, " + COL_TODO_DONE + " INTEGER NOT NULL, " + COL_TODO_FAVOURITE + " INTEGER NOT NULL, " + COL_TODO_CONTACTS + " TEXT)";
 
     public TodoDBHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -34,7 +36,6 @@ public class TodoDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(QUERY_CREATE_TODOS);
-        db.execSQL(QUERY_CREATE_CONTACTS);
     }
 
     @Override
@@ -61,29 +62,24 @@ public class TodoDBHelper extends SQLiteOpenHelper {
     }
 
     public boolean updateTodo(Todo newTodo) {
-        boolean hasTodoUpdateSucceeded = this.getWritableDatabase().update(TABLE_TODOS_NAME, newTodo.toContentValues(), COL_TODO_ID + " = ?", new String[]{newTodo.getId().toString()}) != -1;
-        // boolean hasContactsUpdateSucceeded = TODO FOR CONTACTS;
-        return hasTodoUpdateSucceeded;
+        return this.getWritableDatabase().update(TABLE_TODOS_NAME, newTodo.toContentValues(), COL_TODO_ID + " = ?", new String[]{newTodo.getId().toString()}) != -1;
     }
 
     public boolean insertTodo(Todo todo) {
-        boolean hasTodoInsertionSucceeded = this.getWritableDatabase().insert(TABLE_TODOS_NAME, null, todo.toContentValues()) != -1;
-        // boolean hasContactsInsertionSucceeded = TODO FOR CONTACTS;
-        return hasTodoInsertionSucceeded;
+        return this.getWritableDatabase().insert(TABLE_TODOS_NAME, null, todo.toContentValues()) != -1;
     }
 
     public boolean insertAllTodos(List<Todo> todos) {
-        boolean result = true;
-        for (int i = 0; i < todos.size() && result; i++) {
-            result = result && insertTodo(todos.get(i));
+        for (int i = 0; i < todos.size(); i++) {
+            if (!insertTodo(todos.get(i))) {
+                return false;
+            }
         }
-        return result;
+        return true;
     }
 
     public boolean deleteTodo(Long id) {
-        boolean hasTodoDeletionSucceeded = this.getWritableDatabase().delete(TABLE_TODOS_NAME, COL_TODO_ID + " = ?", new String[]{id.toString()}) == 1;
-        // boolean hasContactsDeletionSucceeded = TODO FOR CONTACTS;
-        return hasTodoDeletionSucceeded;
+        return this.getWritableDatabase().delete(TABLE_TODOS_NAME, COL_TODO_ID + " = ?", new String[]{id.toString()}) == 1;
     }
 
     public void deleteAllTodos() {
@@ -91,7 +87,6 @@ public class TodoDBHelper extends SQLiteOpenHelper {
     }
 
     public void deleteAllTodos(SQLiteDatabase db) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TODOS_NAME);
     }
 }

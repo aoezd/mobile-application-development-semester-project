@@ -37,8 +37,8 @@ public class RouterEmptyActivity extends Activity {
         protected Boolean doInBackground(Void... voids) {
             try {
                 HttpURLConnection c = (HttpURLConnection) new URL(ServiceFactory.BASE_URL).openConnection();
-                c.setReadTimeout(1000); //Milliseconds
-                c.setConnectTimeout(1000); //Milliseconds
+                c.setReadTimeout(1000);
+                c.setConnectTimeout(1000);
                 c.setRequestMethod("GET");
                 c.setDoInput(true);
                 c.connect();

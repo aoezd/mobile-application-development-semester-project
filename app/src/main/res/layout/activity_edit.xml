@@ -87,6 +87,40 @@
             app:layout_constraintStart_toEndOf="@+id/sEditFavourite"
             app:layout_constraintTop_toBottomOf="@+id/etEditDescription" />
 
+        <TextView
+            android:id="@+id/tvEditContacts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/default_contacts_title"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sEditFavourite" />
+
+        <ImageButton
+            android:id="@+id/ibEditAddContact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:background="?android:selectableItemBackground"
+            android:contentDescription="@string/favourite_icon_description"
+            app:layout_constraintStart_toEndOf="@+id/tvEditContacts"
+            app:layout_constraintTop_toBottomOf="@+id/sEditFavourite"
+            app:srcCompat="@drawable/ic_add_circle_outline_black_24dp" />
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvEditContacts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvEditContacts" />
+
         <Button
             android:id="@+id/bSaveTodo"
             android:layout_width="0dp"
@@ -102,7 +136,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sEditFavourite" />
+            app:layout_constraintTop_toBottomOf="@+id/rvEditContacts" />
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

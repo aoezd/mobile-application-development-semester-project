@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cvContact"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/ivContactImage"
+            android:layout_width="75dp"
+            android:layout_height="78dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/picture_description"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_account_box_blue_24dp" />
+
+        <TextView
+            android:id="@+id/tvContactName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/default_contact_name"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@+id/ivContactImage"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivContactTelephone"
+            android:layout_width="15dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
+            android:contentDescription="@string/phone_contact_icon_description"
+            app:layout_constraintStart_toEndOf="@+id/ivContactImage"
+            app:layout_constraintTop_toBottomOf="@+id/tvContactName"
+            app:srcCompat="@drawable/ic_local_phone_dark_grey_24dp" />
+
+        <TextView
+            android:id="@+id/tvContactTelephone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
+            android:text="@string/default_contact_telephone"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/ivContactTelephone"
+            app:layout_constraintTop_toBottomOf="@+id/tvContactName" />
+
+        <ImageView
+            android:id="@+id/ivContactEmail"
+            android:layout_width="15dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
+            android:contentDescription="@string/email_contact_icon_description"
+            app:layout_constraintStart_toEndOf="@+id/ivContactImage"
+            app:layout_constraintTop_toBottomOf="@+id/ivContactTelephone"
+            app:srcCompat="@drawable/ic_email_dark_grey_24dp" />
+
+        <TextView
+            android:id="@+id/tvContactEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
+            android:text="@string/default_contact_email"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/ivContactEmail"
+            app:layout_constraintTop_toBottomOf="@+id/tvContactTelephone" />
+
+        <ImageButton
+            android:id="@+id/ibContactDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:selectableItemBackground"
+            android:contentDescription="@string/delete_contact_icon_description"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_delete_dark_grey_24dp" />
+
+        <ImageButton
+            android:id="@+id/ibContactSendEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:selectableItemBackground"
+            android:contentDescription="@string/send_email_contact_icon_description"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_email_dark_grey_24dp" />
+
+        <ImageButton
+            android:id="@+id/ibSendSms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:selectableItemBackground"
+            android:contentDescription="@string/send_sms_contact_icon_description"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ibContactSendEmail"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_message_grey_24dp" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.v7.widget.CardView>
