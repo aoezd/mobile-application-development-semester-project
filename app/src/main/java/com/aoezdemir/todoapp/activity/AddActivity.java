@@ -9,11 +9,11 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.aoezdemir.todoapp.R;
 import com.aoezdemir.todoapp.activity.adapter.ContactAdapter;
@@ -25,6 +25,7 @@ import com.aoezdemir.todoapp.utils.ContactUtils;
 
 import java.util.Calendar;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,6 +33,7 @@ import retrofit2.Response;
 public class AddActivity extends AppCompatActivity {
 
     public final static String INTENT_KEY_TODO = "ADD_KEY_TODO";
+    private final static String TAG = AddActivity.class.getSimpleName();
 
     private Todo todo;
     private ContactAdapter adapter;
@@ -67,28 +69,42 @@ public class AddActivity extends AppCompatActivity {
                 todo.setDescription(((EditText) findViewById(R.id.etAddDescription)).getText().toString());
                 todo.setDone(false);
                 todo.setFavourite(((Switch) findViewById(R.id.sAddFavourite)).isChecked());
-                boolean dbInsertionSucceeded = new TodoDBHelper(this).insertTodo(todo);
+                TodoDBHelper db = new TodoDBHelper(this);
+                boolean dbInsertionSucceeded = db.insertTodo(todo);
                 if (dbInsertionSucceeded) {
                     boolean isWebApiAccessible = getIntent().getBooleanExtra(RouterEmptyActivity.INTENT_IS_WEB_API_ACCESSIBLE, false);
                     if (isWebApiAccessible) {
-                        ServiceFactory.getServiceTodo().createTodo(todo).enqueue(new Callback<Todo>() {
+                        ServiceFactory.getServiceTodo().deleteAllTodos().enqueue(new Callback<ResponseBody>() {
                             @Override
-                            public void onResponse(@NonNull Call<Todo> call, @NonNull Response<Todo> response) {
-                                if (!response.isSuccessful()) {
-                                    Toast.makeText(getApplicationContext(), "Failed to createTodo new Todo.", Toast.LENGTH_SHORT).show();
-                                }
+                            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                                Log.i(TAG, "All todos deleted on web API.");
                             }
 
                             @Override
-                            public void onFailure(@NonNull Call<Todo> call, @NonNull Throwable t) {
-                                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                                Log.e(TAG, "Could not deleteAllTodos all todos on web API." + t.getMessage());
                             }
                         });
+                        for (Todo todo : db.getAllTodos()) {
+                            ServiceFactory.getServiceTodo().createTodo(todo).enqueue(new Callback<Todo>() {
+                                @Override
+                                public void onResponse(@NonNull Call<Todo> call, @NonNull Response<Todo> response) {
+                                    Log.i(TAG, "Todo with id '" + todo.getId() + "' was created on web API.");
+                                }
+
+                                @Override
+                                public void onFailure(@NonNull Call<Todo> call, @NonNull Throwable t) {
+                                    Log.e(TAG, "Could not deleteAllTodos all todos on web API." + t.getMessage());
+                                }
+                            });
+                        }
                     }
                     Intent addTodoIntent = new Intent();
                     addTodoIntent.putExtra(INTENT_KEY_TODO, todo);
                     setResult(RESULT_OK, addTodoIntent);
                     finish();
+                } else {
+                    Log.d(TAG, "Failed to save into local datatbase.");
                 }
             }
         });
