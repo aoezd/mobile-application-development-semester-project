@@ -1,9 +1,11 @@
 package com.aoezdemir.todoapp.activity;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -53,30 +55,40 @@ public class DetailviewActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.iDelete) {
-            boolean dbDeletionSucceeded = db.deleteTodo(todo.getId());
-            if (dbDeletionSucceeded) {
-                if (isApiAccessable) {
-                    ServiceFactory.getServiceTodo().deleteTodo(todo.getId()).enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                            if (!response.isSuccessful()) {
-                                Toast.makeText(getApplicationContext(), "Remote error: Failed to deleteAllTodos todo.", Toast.LENGTH_SHORT).show();
-                                db.insertTodo(todo);
+            new AlertDialog.Builder(this)
+                    .setTitle("Confirm deletion")
+                    .setMessage("Are you sure to delete this todo?")
+                    .setCancelable(true)
+                    .setNegativeButton("No", (DialogInterface dialog,int id) -> dialog.cancel())
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            boolean dbDeletionSucceeded = db.deleteTodo(todo.getId());
+                            if (dbDeletionSucceeded) {
+                                if (isApiAccessable) {
+                                    ServiceFactory.getServiceTodo().deleteTodo(todo.getId()).enqueue(new Callback<ResponseBody>() {
+                                        @Override
+                                        public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                                            if (!response.isSuccessful()) {
+                                                Toast.makeText(getApplicationContext(), "Remote error: Failed to deleteAllTodos todo.", Toast.LENGTH_SHORT).show();
+                                                db.insertTodo(todo);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                                            Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                                            db.insertTodo(todo);
+                                        }
+                                    });
+                                }
+                                finish();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Local error: Failed to deleteAllTodos todo.", Toast.LENGTH_SHORT).show();
                             }
                         }
-
-                        @Override
-                        public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                            Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-                            db.insertTodo(todo);
-                        }
-                    });
-                }
-                finish();
-                return true;
-            } else {
-                Toast.makeText(getApplicationContext(), "Local error: Failed to deleteAllTodos todo.", Toast.LENGTH_SHORT).show();
-            }
+                    })
+                    .create()
+                    .show();
         }
         return super.onOptionsItemSelected(item);
     }
