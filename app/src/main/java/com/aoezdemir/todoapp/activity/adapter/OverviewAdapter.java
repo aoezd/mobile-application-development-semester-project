@@ -29,8 +29,8 @@ import retrofit2.Response;
 
 public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.OverviewViewHolder> {
 
-    public final static int CREATE_NEW_TODO = 0;
-    public final static int EDIT_TODO = 1;
+    public final static int REQUEST_CREATE_NEW_TODO = 0;
+    public final static int REQUEST_EDIT_TODO = 1;
 
     private List<Todo> todos;
     private boolean isApiAccessible;
@@ -49,7 +49,9 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
 
     @Override
     public void onBindViewHolder(@NonNull OverviewViewHolder holder, int position) {
-        if (todos != null && !todos.isEmpty() && position < todos.size()) {
+        if (todos != null &&
+                !todos.isEmpty() &&
+                position < todos.size()) {
 
             // Load the actual todo into the card view
             holder.loadTodo(todos.get(position), position);
@@ -118,22 +120,11 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
             db = new TodoDBHelper(view.getContext());
         }
 
-        /**
-         * Sets the title of given todo to the title of the card view.
-         * If the todo is done the title color should be dark grey.
-         *
-         * @param todo
-         */
         private void initTodoTitle(Todo todo) {
             tvTodoTitle.setText(todo.getName());
             tvTodoTitle.setTextColor(view.getResources().getColor(todo.isDone() ? R.color.colorTodoTitleDone : R.color.colorTodoTitleDefault, null));
         }
 
-        /**
-         * Sets the expiry date of the given todo to a textview of the card view.
-         *
-         * @param todo
-         */
         private void initTodoDate(Todo todo) {
             int textColor = todo.isDone() ? R.color.colorTodoDateDefault : todo.isExpired() ? R.color.colorTodoDateExpired : R.color.colorTodoDateDefault;
             tvTodoDate.setText(todo.formatExpiry());
@@ -141,14 +132,6 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
             ivDateIcon.setImageDrawable(view.getResources().getDrawable(todo.isDone() ? R.drawable.ic_event_note_dark_gray_24dp : todo.isExpired() ? R.drawable.ic_event_note_red_24dp : R.drawable.ic_event_note_dark_gray_24dp, null));
         }
 
-        /**
-         * Based on the done status of the todo, a different image will be display to show the current status.
-         * After a click on the element a request will be sent to the API to change the status of the todo.
-         * If something went wrong the changes will be reseted.
-         *
-         * @param todo     Todo which state was changed
-         * @param position Position of the element in the RecyclerView for updating the UI
-         */
         private void initTodoDoneToggle(Todo todo, int position) {
             ibDone.setImageResource(todo.isDone() ? R.drawable.ic_check_circle_green_24dp : todo.isExpired() ? R.drawable.ic_error_outline_red_24dp : R.drawable.ic_radio_button_not_done_green_24dp);
             ibDone.setOnClickListener((View v) -> {
@@ -181,14 +164,6 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
             });
         }
 
-        /**
-         * Based on the favourite status of the todo, a different image will be display to show the current status.
-         * The favourite toggle should only be visible if the todo is not done yet.
-         * If something went wrong the changes will be reseted.
-         *
-         * @param todo     Todo which favourite state was changed
-         * @param position Position of the element in the RecyclerView for updating the UI
-         */
         private void initTodoFavouriteToggle(Todo todo, int position) {
             ibFavoriteToggle.setVisibility(todo.isDone() ? View.INVISIBLE : View.VISIBLE);
             ibFavoriteToggle.setImageResource(todo.isFavourite() ? R.drawable.ic_favorite_red_24dp : R.drawable.ic_favorite_border_dark_gray_24dp);
@@ -229,17 +204,10 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
                 Intent editIntent = new Intent(view.getContext(), EditActivity.class);
                 editIntent.putExtra(EditActivity.INTENT_KEY_TODO, todo);
                 editIntent.putExtra(RouterEmptyActivity.INTENT_IS_WEB_API_ACCESSIBLE, isApiAccessible);
-                ((Activity) view.getContext()).startActivityForResult(editIntent, EDIT_TODO);
+                ((Activity) view.getContext()).startActivityForResult(editIntent, REQUEST_EDIT_TODO);
             });
         }
 
-        /**
-         * Initializes the deleteAllTodos button on the overview todo list.
-         * Will be shown if todo is done.
-         *
-         * @param todo     To be deleted
-         * @param position For updating/notify the adapter
-         */
         private void initTodoDelete(Todo todo, int position) {
             ibDelete.setVisibility(todo.isDone() ? View.VISIBLE : View.INVISIBLE);
             ibDelete.setOnClickListener((View v) -> {
@@ -273,12 +241,6 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.Overvi
             });
         }
 
-        /**
-         * Evaluates the given todo and defines the visual outcome of the card view.
-         *
-         * @param todo     Todo to be displayed in the list
-         * @param position Index of the todo in the list
-         */
         void loadTodo(Todo todo, int position) {
             initTodoTitle(todo);
             initTodoDate(todo);

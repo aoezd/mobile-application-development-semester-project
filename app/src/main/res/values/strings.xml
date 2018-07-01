@@ -9,10 +9,13 @@
     <string name="favourite_icon_description">Icon of heart. Describes if todo is a favourite.</string>
     <string name="done_icon_description">Icon of circles. Describes if todo is a done.</string>
     <string name="delete_icon_name">Delete</string>
+    <string name="default_contacts_title">Linked contacts</string>
 
     // Add / Over / Edit view
     <string name="add_button">Add todo</string>
     <string name="save_button">Save changes</string>
+    <string name="add_contacts_button">Add contacts</string>
+    <string name="add_contacts_button_description">Plus icon for linking mere contacts with todo.</string>
     <string name="title_label">Title</string>
     <string name="description_label">Description</string>
     <string name="done_label">Is done?</string>
@@ -21,7 +24,8 @@
     <string name="default_contact_telephone">DefaultContactTelephone</string>
     <string name="default_contact_email">DefaultContactEmail</string>
     <string name="delete_contact_icon_description">Delete</string>
-    <string name="share_contact_icon_description">Icon of an arrow. Shares todo with contact.</string>
+    <string name="send_email_contact_icon_description">Icon of an email. Shares todo with contact.</string>
+    <string name="send_sms_contact_icon_description">Icon of an message. Shares todo with contact.</string>
     <string name="phone_contact_icon_description">Icon of phone</string>
     <string name="email_contact_icon_description">Icon of email</string>
     <string name="picture_description">Profile picture of user.</string>

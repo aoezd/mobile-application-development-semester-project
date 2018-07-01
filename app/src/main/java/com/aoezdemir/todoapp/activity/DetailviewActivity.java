@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aoezdemir.todoapp.R;
+import com.aoezdemir.todoapp.activity.adapter.ContactAdapter;
 import com.aoezdemir.todoapp.activity.adapter.OverviewAdapter;
 import com.aoezdemir.todoapp.crud.local.TodoDBHelper;
 import com.aoezdemir.todoapp.crud.remote.ServiceFactory;
@@ -80,7 +83,7 @@ public class DetailviewActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == OverviewAdapter.EDIT_TODO && resultCode == RESULT_OK &&
+        if (requestCode == OverviewAdapter.REQUEST_EDIT_TODO && resultCode == RESULT_OK &&
                 data != null && data.hasExtra(EditActivity.INTENT_KEY_TODO)) {
             todo = (Todo) data.getSerializableExtra(EditActivity.INTENT_KEY_TODO);
             initializeDetailView();
@@ -94,6 +97,7 @@ public class DetailviewActivity extends AppCompatActivity {
         loadTodoDoneIcon();
         loadTodoFavouriteIcon();
         loadTodoEdit();
+        loadTodoContacts();
     }
 
     private void loadTodoTitle() {
@@ -131,7 +135,15 @@ public class DetailviewActivity extends AppCompatActivity {
             Intent editIntent = new Intent(v.getContext(), EditActivity.class);
             editIntent.putExtra(EditActivity.INTENT_KEY_TODO, todo);
             editIntent.putExtra(RouterEmptyActivity.INTENT_IS_WEB_API_ACCESSIBLE, isApiAccessable);
-            ((Activity) v.getContext()).startActivityForResult(editIntent, OverviewAdapter.EDIT_TODO);
+            ((Activity) v.getContext()).startActivityForResult(editIntent, OverviewAdapter.REQUEST_EDIT_TODO);
         });
+    }
+
+    private void loadTodoContacts() {
+        RecyclerView rvContacts = findViewById(R.id.rvDetailContacts);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        rvContacts.setLayoutManager(linearLayoutManager);
+        rvContacts.setAdapter(new ContactAdapter(todo, false, getContentResolver(), this));
     }
 }

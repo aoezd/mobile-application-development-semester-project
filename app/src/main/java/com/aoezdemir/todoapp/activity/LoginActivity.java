@@ -114,7 +114,7 @@ public class LoginActivity extends AppCompatActivity {
                     Boolean authSuccess = response.body();
                     if (authSuccess != null && authSuccess) {
                         Intent intent = new Intent(v.getContext(), OverviewActivity.class);
-                        intent.putExtra(RouterEmptyActivity.INTENT_IS_WEB_API_ACCESSIBLE, false);
+                        intent.putExtra(RouterEmptyActivity.INTENT_IS_WEB_API_ACCESSIBLE, true);
                         startActivity(intent);
                     } else {
                         tvErrorInfo.setVisibility(View.VISIBLE);

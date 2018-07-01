@@ -19,6 +19,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:background="?android:selectableItemBackground"
+            android:contentDescription="@string/done_icon_description"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_radio_button_not_done_green_24dp" />
@@ -67,6 +68,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginTop="16dp"
             android:background="?android:selectableItemBackground"
+            android:contentDescription="@string/favourite_icon_description"
             app:layout_constraintEnd_toStartOf="@+id/ibEdit"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_favorite_border_dark_gray_24dp" />
@@ -78,6 +80,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginTop="16dp"
             android:background="?android:selectableItemBackground"
+            android:contentDescription="@string/edit_icon_description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_edit_black_24dp" />
@@ -89,6 +92,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginTop="16dp"
             android:background="?android:selectableItemBackground"
+            android:contentDescription="@string/delete_contact_icon_description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_delete_dark_grey_24dp" />

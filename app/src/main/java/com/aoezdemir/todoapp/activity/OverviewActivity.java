@@ -100,7 +100,7 @@ public class OverviewActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == OverviewAdapter.CREATE_NEW_TODO && resultCode == RESULT_OK &&
+        if (requestCode == OverviewAdapter.REQUEST_CREATE_NEW_TODO && resultCode == RESULT_OK &&
                 data != null && data.hasExtra(AddActivity.INTENT_KEY_TODO)) {
             todos.add((Todo) data.getSerializableExtra(AddActivity.INTENT_KEY_TODO));
             updateAdapter();
@@ -151,15 +151,13 @@ public class OverviewActivity extends AppCompatActivity {
     }
 
     private void initializeUIElements() {
-        if (todos != null && !todos.isEmpty()) {
-            todos = TodoListSorter.sort(todos, sortDateBased);
-            ovAdapter = new OverviewAdapter(todos, isApiAccessable);
-            rvOverview.setAdapter(ovAdapter);
-        }
+        ovAdapter = new OverviewAdapter(todos, isApiAccessable);
+        todos = TodoListSorter.sort(todos, sortDateBased);
+        rvOverview.setAdapter(ovAdapter);
         findViewById(R.id.fabAddTodo).setOnClickListener((View v) -> {
             Intent intent = new Intent(this, AddActivity.class);
             intent.putExtra(RouterEmptyActivity.INTENT_IS_WEB_API_ACCESSIBLE, isApiAccessable);
-            startActivityForResult(intent, OverviewAdapter.CREATE_NEW_TODO);
+            startActivityForResult(intent, OverviewAdapter.REQUEST_CREATE_NEW_TODO);
         });
     }
 }

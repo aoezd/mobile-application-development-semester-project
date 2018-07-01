@@ -11,18 +11,18 @@
         android:isScrollContainer="true">
 
         <TextView
-            android:id="@+id/tvEditTitleLabel"
+            android:id="@+id/tvAddTitleLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:labelFor="@+id/etEditTitle"
+            android:labelFor="@+id/etAddTitle"
             android:text="@string/title_label"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/etEditTitle"
+            android:id="@+id/etAddTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -31,10 +31,10 @@
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvEditTitleLabel" />
+            app:layout_constraintTop_toBottomOf="@+id/tvAddTitleLabel" />
 
         <CalendarView
-            android:id="@+id/cvEditExpiryDate"
+            android:id="@+id/cvAddExpiryDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -43,20 +43,20 @@
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etEditTitle" />
+            app:layout_constraintTop_toBottomOf="@+id/etAddTitle" />
 
         <TextView
-            android:id="@+id/tvEditDescriptionLabel"
+            android:id="@+id/tvAddDescriptionLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:labelFor="@+id/etEditDescription"
+            android:labelFor="@+id/etAddDescription"
             android:text="@string/description_label"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cvEditExpiryDate" />
+            app:layout_constraintTop_toBottomOf="@+id/cvAddExpiryDate" />
 
         <EditText
-            android:id="@+id/etEditDescription"
+            android:id="@+id/etAddDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -65,7 +65,51 @@
             android:inputType="text|textMultiLine"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvEditDescriptionLabel" />
+            app:layout_constraintTop_toBottomOf="@+id/tvAddDescriptionLabel" />
+
+        <Switch
+            android:id="@+id/sAddFavourite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/favourite_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etAddDescription" />
+
+        <TextView
+            android:id="@+id/tvAddContacts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/default_contacts_title"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sAddFavourite" />
+
+        <ImageButton
+            android:id="@+id/ibAddContact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:background="?android:selectableItemBackground"
+            android:contentDescription="@string/add_contacts_button_description"
+            app:layout_constraintStart_toEndOf="@+id/tvAddContacts"
+            app:layout_constraintTop_toBottomOf="@+id/sAddFavourite"
+            app:srcCompat="@drawable/ic_add_circle_outline_black_24dp" />
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvAddContacts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvAddContacts" />
 
         <Button
             android:id="@+id/bAddTodo"
@@ -82,17 +126,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sEditFavourite" />
-
-        <Switch
-            android:id="@+id/sEditFavourite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/favourite_label"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etEditDescription" />
+            app:layout_constraintTop_toBottomOf="@+id/rvAddContacts" />
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>
