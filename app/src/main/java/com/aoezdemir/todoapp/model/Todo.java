@@ -49,8 +49,9 @@ public class Todo implements Serializable {
         Long expiry = cursorTodo.getLong(3);
         Boolean done = cursorTodo.getInt(4) != 0;
         Boolean favourite = cursorTodo.getInt(5) != 0;
-        String contacts = cursorTodo.getString(6);
-        return new Todo(id, name, description, expiry, done, favourite, new ArrayList<>(Arrays.asList(contacts.split(","))));
+        String contactsdb = cursorTodo.getString(6);
+        List<String> contacts = contactsdb.isEmpty() ? new ArrayList<>() : new ArrayList<>(Arrays.asList(contactsdb.split(",")));
+        return new Todo(id, name, description, expiry, done, favourite, contacts);
     }
 
     public Long getId() {
@@ -156,7 +157,7 @@ public class Todo implements Serializable {
         cv.put(TodoDBHelper.COL_TODO_EXPIRY, expiry);
         cv.put(TodoDBHelper.COL_TODO_DONE, done ? 1 : 0);
         cv.put(TodoDBHelper.COL_TODO_FAVOURITE, favourite ? 1 : 0);
-        cv.put(TodoDBHelper.COL_TODO_CONTACTS, android.text.TextUtils.join(",", contacts));
+        cv.put(TodoDBHelper.COL_TODO_CONTACTS, contacts.isEmpty() ? null : android.text.TextUtils.join(",", contacts));
         return cv;
     }
 

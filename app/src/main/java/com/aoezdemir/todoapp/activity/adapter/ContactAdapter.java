@@ -161,18 +161,20 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         }
 
         void loadContact(String contact, int position) {
-            String contentId = contact.split(";")[0];
-            String contentName = contact.split(";")[1];
-            String email = ContactUtils.getContactEmailById(resolver, contentId);
-            String phone = ContactUtils.getContactPhoneById(resolver, contentId);
+            if (contact != null && !contact.isEmpty()) {
+                String contentId = contact.split(";")[0];
+                String contentName = contact.split(";")[1];
+                String email = ContactUtils.getContactEmailById(resolver, contentId);
+                String phone = ContactUtils.getContactPhoneById(resolver, contentId);
 
-            initContactImage(contentId);
-            tvContactName.setText(contentName);
-            tvContactTelephone.setText(phone);
-            tvContactEmail.setText(email);
-            initContactDelete(position);
-            initContactSendEmail(email);
-            initContactSendSms(phone);
+                initContactImage(contentId);
+                tvContactName.setText(contentName);
+                tvContactTelephone.setText(phone);
+                tvContactEmail.setText(email);
+                initContactDelete(position);
+                initContactSendEmail(email);
+                initContactSendSms(phone);
+            }
         }
     }
 }
