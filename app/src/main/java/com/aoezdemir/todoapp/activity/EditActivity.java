@@ -9,6 +9,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
@@ -95,8 +97,17 @@ public class EditActivity extends AppCompatActivity {
     private void loadTodoTitle() {
         etEditTitle = findViewById(R.id.etEditTitle);
         etEditTitle.setText(todo.getName());
-        etEditTitle.setOnFocusChangeListener((View v, boolean hasFocus) -> {
-            if (!hasFocus && !etEditTitle.getText().toString().equals(todo.getName())) {
+        etEditTitle.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
                 enableSaveButton();
             }
         });
@@ -119,8 +130,17 @@ public class EditActivity extends AppCompatActivity {
     private void loadTodoDescription() {
         etEditDescription = findViewById(R.id.etEditDescription);
         etEditDescription.setText(todo.getDescription());
-        etEditDescription.setOnFocusChangeListener((View v, boolean hasFocus) -> {
-            if (!hasFocus && !etEditDescription.getText().toString().equals(todo.getDescription())) {
+        etEditDescription.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
                 enableSaveButton();
             }
         });

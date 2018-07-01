@@ -104,7 +104,7 @@ public class AddActivity extends AppCompatActivity {
                     setResult(RESULT_OK, addTodoIntent);
                     finish();
                 } else {
-                    Log.d(TAG, "Failed to save into local datatbase.");
+                    Log.d(TAG, "Failed to save into local database.");
                 }
             }
         });
