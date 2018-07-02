@@ -1,9 +1,14 @@
 # Mobile Application Development Semesterprojekt
-Project requirements can be found here: https://moodle.oncampus.de/pluginfile.php/1128479/mod_resource/content/3/mad_semesterprojekt_s18_180227.pdf
 
-# Requirements to pass the lecture
+## Getting Started
 
-## Data model
+### Prerequisites
+
+### Installing
+
+## Requirements to pass the lecture
+
+### Data model
 The data model for Todos should allow to represent the following information:
 - [x] The name of the Todo
 - [x] A description of the todo
@@ -12,7 +17,7 @@ The data model for Todos should allow to represent the following information:
 - [x] The due date of the todo and a time
 - [x] All information components, including the name, should be changeable after creating a todo
 
-## Saving todos
+### Saving todos
 Todos should be saved using both an external web application and a local data store. The Web application is provided as a Java EE Web Application.
 - [x] Todos are to be stored in an SQLite database on the mobile device
 - [x] If a write operation has been successfully executed on the local SQLite database, the relevant operation should be called on the web application. The IDs assigned by the SQLite database can be taken over by the web application
@@ -21,7 +26,7 @@ Todos should be saved using both an external web application and a local data st
 - [x] If there are local todos, all todos on the Web application pages are deleted and the local todos are transferred to the Web application.
 - [x] If there are no local todos, all todos are transferred from the web application to the local database.
 
-## Login
+### Login
 The registration should be done by entering an email and a password and by pressing a login button.
 - [x] Only email addresses should be entered in the input field for email.
 - [x] If no email address is entered, a permanently visible error message is displayed.
@@ -37,7 +42,7 @@ The registration should be done by entering an email and a password and by press
 - [x] If the entered values are checked successfully, the todos should be displayed.
 - [x] If there is no connection to the web application when starting the Android application, the todo list is displayed immediately. A local login is not required. (Note: points for this requirement will only be awarded if the registration using the web application has been implemented in principle.
 
-## Todo list
+### Todo list
 The todo list should display an overview of all todos and enable the creation of new todos. It should display the following information for each todo:
 - [x] the name
 - [x] the due
@@ -50,7 +55,7 @@ The todo list should display an overview of all todos and enable the creation of
 - [x] The user should be able to select the display by date+importance vs. importance+date via an options menu or action bar options.
 - [x] Overdue todos - i.e. todos with an expired due date - should be highlighted visually.
 
-## Detail view
+### Detail view
 The detail view should show all data represented by a todo. Sie soll außerdem die Änderung zumindest der folgenden
 Daten eines Todo ermöglichen:
 - [x] the name
@@ -60,7 +65,7 @@ Daten eines Todo ermöglichen:
 - [x] The UI controls provided by Android for this purpose are to be used for setting the date and time.
 - [x] The deletion of a todo should also be possible via the detailed view and should be confirmed before execution.
 
-## Link with contacts
+### Link with contacts
 Allow the association of a todo with a set of contacts at the data model level.
 - [x] Allow the user to optionally link todos to a list of contacts at the level of the detail view.
 - [x] The contacts are to be selected on the basis of a display of all available contacts.
@@ -68,3 +73,9 @@ Allow the association of a todo with a set of contacts at the data model level.
 - [x] Allow you to remove contacts from a todo's linked contacts list.
 - [x] Also allow the user to be contacted by e-mail or SMS for each contact if an e-mail address or mobile phone number is available.
 - [x] When contacting, the email address/mobile phone number, the title and the description of the todo of the Android app used in each case should be transmitted.
+
+## Built with
+* Android
+* Retrofit
+* SQLite
+* Gson
