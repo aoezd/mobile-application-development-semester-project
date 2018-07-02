@@ -1,12 +1,18 @@
 # Mobile Application Development Semesterprojekt
+As part of a semester project in the lecture Mobile Application Development @FachhochschuleLübeck, every student hat to build a small todo app with Android. Jump to the [project requirements](#requirements-to-pass-the-lecture), to get a feeling for what had to be done in the project. Please note that all aspects regarding the UI were left to the students.
 
 ## Getting Started
 
 ### Prerequisites
+In order for the app to be tested, the following prerequisites must be created/installed beforehand:
+* Android Studio
+* An Android virtual device to start the apk
+* The AVD must have at least one fictual contact
+* Run the JAR sample-webapi-1.0-SNAPSHOT-war-exec.jar at the repository [org.dieschnittstelle.mobile.android.samples.dataaccess](https://github.com/dieschnittstelle/org.dieschnittstelle.mobile.android.samples.dataaccess). This Java application provides a simple REST API for organizing all todos. The API is needed to use the login UI.
 
 ### Installing
-
-## Basic features
+* Clone this Android project and open it in Android Studio.
+* Build the project with Gradle and start the app with your AVD.
 
 ## Requirements to pass the lecture
 
@@ -78,6 +84,7 @@ Allow the association of a todo with a set of contacts at the data model level.
 
 ## Built with
 * Android
+* Gradle
 * Retrofit
 * SQLite
 * Gson
