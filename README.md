@@ -6,6 +6,8 @@
 
 ### Installing
 
+## Basic features
+
 ## Requirements to pass the lecture
 
 ### Data model
