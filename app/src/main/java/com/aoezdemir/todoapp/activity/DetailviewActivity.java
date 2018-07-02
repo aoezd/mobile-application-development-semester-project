@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import com.aoezdemir.todoapp.R;
 import com.aoezdemir.todoapp.activity.adapter.ContactAdapter;
-import com.aoezdemir.todoapp.activity.adapter.OverviewAdapter;
 import com.aoezdemir.todoapp.crud.local.TodoDBHelper;
 import com.aoezdemir.todoapp.crud.remote.ServiceFactory;
 import com.aoezdemir.todoapp.model.Todo;
@@ -59,7 +58,7 @@ public class DetailviewActivity extends AppCompatActivity {
                     .setTitle("Confirm deletion")
                     .setMessage("Are you sure to delete this todo?")
                     .setCancelable(true)
-                    .setNegativeButton("No", (DialogInterface dialog,int id) -> dialog.cancel())
+                    .setNegativeButton("No", (DialogInterface dialog, int id) -> dialog.cancel())
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             boolean dbDeletionSucceeded = db.deleteTodo(todo.getId());
@@ -95,7 +94,7 @@ public class DetailviewActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == OverviewAdapter.REQUEST_EDIT_TODO && resultCode == RESULT_OK &&
+        if (requestCode == OverviewActivity.REQUEST_EDIT_TODO && resultCode == RESULT_OK &&
                 data != null && data.hasExtra(EditActivity.INTENT_KEY_TODO)) {
             todo = (Todo) data.getSerializableExtra(EditActivity.INTENT_KEY_TODO);
             initializeDetailView();
@@ -147,7 +146,7 @@ public class DetailviewActivity extends AppCompatActivity {
             Intent editIntent = new Intent(v.getContext(), EditActivity.class);
             editIntent.putExtra(EditActivity.INTENT_KEY_TODO, todo);
             editIntent.putExtra(RouterEmptyActivity.INTENT_IS_WEB_API_ACCESSIBLE, isApiAccessable);
-            ((Activity) v.getContext()).startActivityForResult(editIntent, OverviewAdapter.REQUEST_EDIT_TODO);
+            ((Activity) v.getContext()).startActivityForResult(editIntent, OverviewActivity.REQUEST_EDIT_TODO);
         });
     }
 
@@ -157,5 +156,8 @@ public class DetailviewActivity extends AppCompatActivity {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rvContacts.setLayoutManager(linearLayoutManager);
         rvContacts.setAdapter(new ContactAdapter(todo, false, getContentResolver(), this));
+        ((TextView) findViewById(R.id.tvDetailContacts)).setText(getResources().getString(todo.getContacts() == null || todo.getContacts().isEmpty() ?
+                R.string.default_no_contacts_title :
+                R.string.default_contacts_title));
     }
 }

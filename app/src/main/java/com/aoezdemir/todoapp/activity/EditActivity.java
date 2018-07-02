@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
@@ -27,7 +28,10 @@ import com.aoezdemir.todoapp.model.Todo;
 import com.aoezdemir.todoapp.utils.AlertDialogMaker;
 import com.aoezdemir.todoapp.utils.ContactUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,7 +44,7 @@ public class EditActivity extends AppCompatActivity {
     public final static int REQUEST_PERMISSIONS = 1;
 
     private Todo todo;
-    private long expiry;
+    private Calendar expiry;
     private EditText etEditTitle;
     private EditText etEditDescription;
     private Switch sEditDone;
@@ -58,8 +62,11 @@ public class EditActivity extends AppCompatActivity {
         isApiAccessible = getIntent().getBooleanExtra(RouterEmptyActivity.INTENT_IS_WEB_API_ACCESSIBLE, false);
         db = new TodoDBHelper(this);
         adapter = new ContactAdapter(todo, true, getContentResolver(), this);
+        expiry = Calendar.getInstance();
+        expiry.setTimeInMillis(todo.getExpiry());
         loadTodoTitle();
         loadTodoExpiry();
+        loadTodoTime();
         loadTodoDescription();
         loadTodoDone();
         loadTodoFavourite();
@@ -88,7 +95,7 @@ public class EditActivity extends AppCompatActivity {
 
     private void updateTodoWithUIData() {
         todo.setName(etEditTitle.getText().toString());
-        todo.setExpiry(expiry);
+        todo.setExpiry(expiry.getTimeInMillis());
         todo.setDone(sEditDone.isChecked());
         todo.setDescription(etEditDescription.getText().toString());
         todo.setFavourite(sEditFavourite.isChecked());
@@ -108,21 +115,60 @@ public class EditActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                enableSaveButton();
+                if (!etEditTitle.getText().toString().trim().isEmpty()) {
+                    enableSaveButton();
+                } else {
+                    disableSaveButton();
+                }
+            }
+        });
+    }
+
+    private boolean isValidTime(String time) {
+        if (time != null && !time.isEmpty() && time.contains(":") && time.length() <= 5 && !time.startsWith(":") && !time.endsWith(":")) {
+            int hour = Integer.valueOf(time.split(":")[0]);
+            int minute = Integer.valueOf(time.split(":")[1]);
+            return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59;
+        }
+        return false;
+    }
+
+    private void loadTodoTime() {
+        EditText etEditTime = findViewById(R.id.etEditTime);
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.GERMAN);
+        etEditTime.setText(sdf.format(new Date(todo.getExpiry())));
+        etEditTime.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String time = etEditTime.getText().toString().trim();
+                if (isValidTime(time)) {
+                    expiry.set(Calendar.HOUR_OF_DAY, Integer.valueOf(time.split(":")[0]));
+                    expiry.set(Calendar.MINUTE, Integer.valueOf(time.split(":")[1]));
+                    expiry.set(Calendar.SECOND, 0);
+                    expiry.set(Calendar.MILLISECOND, 0);
+                    enableSaveButton();
+                } else {
+                    disableSaveButton();
+                }
             }
         });
     }
 
     private void loadTodoExpiry() {
         CalendarView cvEditExpiryDate = findViewById(R.id.cvEditExpiryDate);
-        expiry = todo.getExpiry();
-        cvEditExpiryDate.setDate(expiry);
+        cvEditExpiryDate.setDate(todo.getExpiry());
         cvEditExpiryDate.setOnDateChangeListener((@NonNull CalendarView view, int year, int month, int dayOfMonth) -> {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.YEAR, year);
-            calendar.set(Calendar.MONTH, month);
-            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            expiry = calendar.getTime().getTime();
+            expiry.set(Calendar.YEAR, year);
+            expiry.set(Calendar.MONTH, month);
+            expiry.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             enableSaveButton();
         });
     }
@@ -161,6 +207,11 @@ public class EditActivity extends AppCompatActivity {
     public void enableSaveButton() {
         bSaveTodo.setEnabled(true);
         bSaveTodo.setBackgroundColor(getResources().getColor(R.color.colorAccent, null));
+    }
+
+    public void disableSaveButton() {
+        bSaveTodo.setEnabled(false);
+        bSaveTodo.setBackgroundColor(getResources().getColor(R.color.colorTodoTitleDone, null));
     }
 
     private void loadTodoContacts() {

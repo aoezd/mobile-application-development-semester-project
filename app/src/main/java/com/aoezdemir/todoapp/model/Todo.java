@@ -50,7 +50,9 @@ public class Todo implements Serializable {
         Boolean done = cursorTodo.getInt(4) != 0;
         Boolean favourite = cursorTodo.getInt(5) != 0;
         String contactsdb = cursorTodo.getString(6);
-        List<String> contacts = contactsdb.isEmpty() ? new ArrayList<>() : new ArrayList<>(Arrays.asList(contactsdb.split(",")));
+        List<String> contacts = contactsdb != null && !contactsdb.isEmpty() ?
+                new ArrayList<>(Arrays.asList(contactsdb.split(","))) :
+                new ArrayList<>();
         return new Todo(id, name, description, expiry, done, favourite, contacts);
     }
 
@@ -91,7 +93,7 @@ public class Todo implements Serializable {
     }
 
     public String formatExpiry() {
-        return expiry != null ? new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.GERMANY).format(new Date(expiry)) : DEFAULT_EXPIRY;
+        return expiry != null ? new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.GERMAN).format(new Date(expiry)) : DEFAULT_EXPIRY;
     }
 
     public Boolean isDone() {
@@ -127,13 +129,6 @@ public class Todo implements Serializable {
         }
     }
 
-    public void addAllContacts(List<String> contacts) {
-        if (this.contacts == null) {
-            this.contacts = new ArrayList<>();
-        }
-        this.contacts.addAll(contacts);
-    }
-
     public Location getLocation() {
         return location;
     }
@@ -157,7 +152,7 @@ public class Todo implements Serializable {
         cv.put(TodoDBHelper.COL_TODO_EXPIRY, expiry);
         cv.put(TodoDBHelper.COL_TODO_DONE, done ? 1 : 0);
         cv.put(TodoDBHelper.COL_TODO_FAVOURITE, favourite ? 1 : 0);
-        cv.put(TodoDBHelper.COL_TODO_CONTACTS, contacts.isEmpty() ? null : android.text.TextUtils.join(",", contacts));
+        cv.put(TodoDBHelper.COL_TODO_CONTACTS, contacts == null ? null : android.text.TextUtils.join(",", contacts));
         return cv;
     }
 

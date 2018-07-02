@@ -33,27 +33,58 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvEditTitleLabel" />
 
+        <TextView
+            android:id="@+id/tvEditExpiryTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/expiry_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etEditTitle" />
+
         <CalendarView
             android:id="@+id/cvEditExpiryDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etEditTitle" />
+            app:layout_constraintTop_toBottomOf="@+id/tvEditExpiryTitle" />
+
+        <TextView
+            android:id="@+id/tvEditTimeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/time_label"
+            android:labelFor="@+id/etEditTime"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cvEditExpiryDate" />
+
+        <EditText
+            android:id="@+id/etEditTime"
+            android:layout_width="56dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:ems="10"
+            android:inputType="time"
+            android:text="@string/default_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvEditTimeTitle" />
 
         <TextView
             android:id="@+id/tvEditDescriptionLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:labelFor="@+id/etEditDescription"
             android:text="@string/description_label"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cvEditExpiryDate" />
+            app:layout_constraintTop_toBottomOf="@+id/etEditTime" />
 
         <EditText
             android:id="@+id/etEditDescription"
@@ -61,6 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:ems="10"
             android:inputType="text|textMultiLine"
             app:layout_constraintEnd_toEndOf="parent"
@@ -130,6 +162,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:background="@color/colorTodoTitleDone"
+            android:enabled="false"
             android:text="@string/save_button"
             android:textColor="@color/cardview_light_background"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -10,6 +10,7 @@
     <string name="done_icon_description">Icon of circles. Describes if todo is a done.</string>
     <string name="delete_icon_name">Delete</string>
     <string name="default_contacts_title">Linked contacts</string>
+    <string name="default_no_contacts_title">No linked contacts</string>
 
     // Add / Over / Edit view
     <string name="add_button">Add todo</string>
@@ -17,6 +18,8 @@
     <string name="add_contacts_button">Add contacts</string>
     <string name="add_contacts_button_description">Plus icon for linking mere contacts with todo.</string>
     <string name="title_label">Title</string>
+    <string name="expiry_label">Date</string>
+    <string name="time_label">Time</string>
     <string name="description_label">Description</string>
     <string name="done_label">Is done?</string>
     <string name="favourite_label">Is favourite?</string>
@@ -29,6 +32,7 @@
     <string name="phone_contact_icon_description">Icon of phone</string>
     <string name="email_contact_icon_description">Icon of email</string>
     <string name="picture_description">Profile picture of user.</string>
+    <string name="default_time">00:00</string>
 
     // Menu
     <string name="menu_date">Sort by date</string>
