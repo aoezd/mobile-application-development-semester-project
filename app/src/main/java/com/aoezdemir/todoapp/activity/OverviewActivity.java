@@ -324,7 +324,6 @@ public class OverviewActivity extends AppCompatActivity {
                         }
                         todos = TodoListSorter.sort(todos, sortDateBased);
                         adapter.notifyDataSetChanged();
-
                         ibFavoriteToggle.setVisibility(todo.isDone() ? View.INVISIBLE : View.VISIBLE);
                     } else {
                         Toast.makeText(view.getContext(), "Local error: Failed to change favourite state", Toast.LENGTH_SHORT).show();
@@ -368,7 +367,7 @@ public class OverviewActivity extends AppCompatActivity {
                             });
                         }
                         adapter.notifyItemRemoved(position);
-                        ibDelete.setVisibility(todo.isDone() ? View.VISIBLE : View.INVISIBLE);
+                        adapter.notifyDataSetChanged();
                     } else {
                         Toast.makeText(view.getContext(), "Local error: Failed to deleteAllTodos todo", Toast.LENGTH_SHORT).show();
                     }
